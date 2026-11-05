@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Serein ⇄ Discord CSS converter</title>
 <meta name="description" content="Convert Serein themes to Discord CSS and back, with a live preview.">
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23111'/%3E%3Crect x='3' y='3' width='26' height='26' fill='none' stroke='%23ff6a2b' stroke-width='2' stroke-dasharray='4 3'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%23ff6a2b' font-family='monospace'%3E%E2%87%84%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Serein ⇄ Discord CSS converter">
+<meta property="og:description" content="Convert Serein themes to Discord CSS and back, with a live preview.">
+<meta property="og:url" content="https://extera.is-a.dev/">
+<meta property="og:image" content="https://extera.is-a.dev/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -141,6 +149,24 @@ h2{margin:64px 0 20px;background:none}
 footer{margin-top:64px;padding-top:18px;border-top:1px dashed var(--line)}
 .lb h3 span{color:var(--acc)}
 dialog#log{border-left-style:dashed}
+
+.imgc{display:inline-flex;align-items:center;gap:8px}
+#imgName{font:12px "IBM Plex Mono",monospace;color:var(--sub);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ph2{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:64px 0 16px}
+.ph2 h2{margin:0}
+.seg2{display:inline-flex;border:1px dashed var(--line)}
+.seg2 button{background:none;border:0;color:var(--sub);padding:5px 12px;font:500 12.5px "IBM Plex Mono",monospace;cursor:pointer}
+.seg2 button[aria-pressed="true"]{color:var(--btnT);background:var(--acc)}
+.hint{color:var(--sub);font-size:13px}
+.sw label{position:relative;display:flex;align-items:center;gap:8px;background:var(--surf);padding:9px 12px;font:12px "IBM Plex Mono",monospace;color:var(--sub);border-right:1px solid var(--line);border-bottom:1px solid var(--line);cursor:pointer}
+.sw label:hover{background:rgba(127,127,127,.12)}
+.sw input[type=color]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:0;padding:0}
+.batch{margin-top:14px;border:1px solid var(--line);background:var(--surf);font:12.5px "IBM Plex Mono",monospace}
+.batch .bh{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px dashed var(--line);color:var(--ink)}
+.batch .br{display:flex;gap:16px;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--line);color:var(--sub)}
+.batch .br:last-child{border-bottom:0}.batch .br span:first-child{color:var(--ink)}.batch .bad{color:var(--err)}
+.batch[hidden]{display:none}
+.sw .none{grid-column:1/-1;background:var(--surf);padding:10px 14px;font:12px "IBM Plex Mono",monospace;color:var(--sub)}
 </style>
 </head>
 <body>
@@ -158,7 +184,7 @@ dialog#log{border-left-style:dashed}
       <button id="d2" aria-pressed="false">CSS → Serein</button>
     </div>
     <div class="acts">
-      <label class="btn" style="cursor:pointer"><input type="file" id="file" hidden>Open file…</label>
+      <label class="btn" style="cursor:pointer"><input type="file" id="file" multiple hidden>Open file(s)…</label>
       <button class="btn" id="sample">Load example</button>
       <button class="btn" id="swap">Swap</button>
     </div>
@@ -168,6 +194,7 @@ dialog#log{border-left-style:dashed}
     <label>CSS format <select id="oFmt"><option value="native">Discord (standard variables)</option><option value="mica">Discord Mica</option></select></label>
     <label><input type="checkbox" id="oLight" checked> Include light mode</label>
     <label><input type="checkbox" id="oImg" checked> Embed images (base64)</label>
+    <span class="imgc"><label class="btn" style="cursor:pointer"><input type="file" id="imgFile" accept="image/*" hidden>Background image…</label><span id="imgName"></span><button class="btn" id="imgClear" hidden>Remove</button></span>
   </div>
   <div class="panes">
     <div class="pane"><div class="ph"><span id="inT">Input · Serein JSON</span></div><textarea id="inp" spellcheck="false" aria-label="Input" placeholder="Paste text here, or drop a file anywhere on this panel."></textarea></div>
@@ -175,8 +202,9 @@ dialog#log{border-left-style:dashed}
   </div>
 </div>
 <p id="msg" role="status"></p>
+<div id="batch" class="batch" hidden></div>
 
-<h2>Preview · dark mode</h2>
+<div class="ph2"><h2 id="pvT">Preview</h2><div class="seg2" role="group" aria-label="Preview mode"><button id="pvD" aria-pressed="true">Dark</button><button id="pvL" aria-pressed="false">Light</button></div><span class="hint">Click a color to edit it.</span></div>
 <div class="sw" id="sw"></div>
 <div class="fr"><div class="mock" id="mock" aria-label="Discord mockup using the theme colors">
   <div class="top"># general <small>· preview</small></div>
@@ -202,7 +230,14 @@ dialog#log{border-left-style:dashed}
 <dialog id="log" aria-labelledby="logT">
   <div class="lh"><span id="logT">Changelog</span><button id="logX">Close</button></div>
   <div class="lb">
-    <section><h3>v1.6 <span>latest</span></h3><ul>
+    <section><h3>v1.7 <span>latest</span></h3><ul>
+      <li><b>Background image upload.</b> Add your own wallpaper; it is embedded into the Serein file or the CSS.</li>
+      <li><b>Color editor.</b> Click any swatch to change a color; the output and preview update.</li>
+      <li><b>Light preview.</b> Dark / Light switch for the mockup and palette.</li>
+      <li><b>Batch mode.</b> Select or drop several files at once and download them as a ZIP.</li>
+      <li><b>Smarter CSS parsing.</b> Variable-less themes now also give section opacity, window radius and font size.</li>
+      <li>Favicon and link preview card for sharing the site.</li></ul></section>
+    <section><h3>v1.6</h3><ul>
       <li><b>Themes without variables.</b> CSS written as plain rules (no <code>--name</code> variables) is now converted: accent, text, link, hover, positive, warning and danger colors are picked by how often they appear.</li>
       <li><b>Wallpaper.</b> A background image URL in the CSS is downloaded and embedded when the host allows it.</li>
       <li>Named colors (white, silver, gold…) are understood.</li></ul></section>
@@ -290,6 +325,7 @@ const sameArr=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
 /* ---------- Serein → CSS ---------- */
 function serein2css(json){
   const d=JSON.parse(json);
+  if(userImg){d.background_image=userImg;d.cover_image=userImg}
   if(!d.theme)throw new Error('Not a Serein theme: missing "theme" field.');
   const man=d.manifest||{},st=d.theme.style||{},mica=$('oFmt').value==='mica';
   const name=$('oName').value||man.name||'Serein Theme',author=CREDIT;
@@ -340,13 +376,14 @@ function serein2css(json){
 
 /* ---------- themes without variables: guess palette from rules ---------- */
 let pendingBg=null,pendingFit='',ruleNote='',runSeq=0;
+const SECRE=[['top_bar',/channelHeader_|titleBar_|upperContainer_/],['server_list',/guilds_/],['channel_list',/sidebar_/],['message_list',/chatContent_|messagesWrapper_/],['member_list',/membersWrap_|members_/],['composer',/channelTextArea_/]];
 function hsl(c){const r=c[0]/255,g=c[1]/255,b=c[2]/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;let h=0,s=0;if(d){s=d/(1-Math.abs(2*l-1));h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h=(h*60+360)%360}return{h,s,l}}
 function ruleTheme(css){
   const src=css.replace(/\/\*[\s\S]*?\*\//g,'');
   const COL=/#[0-9a-f]{3,8}\b|rgba?\([^)]*\)|\b(?:white|black|silver|gold|red|lightgreen|firebrick|gray|grey|yellow|orange|blue|green)\b/gi;
   const cols=v=>(v.replace(/url\([^)]*\)/gi,'').match(COL)||[]).map(parseColor).filter(Boolean);
   const sat=new Map(),dark=new Map(),tx=new Map(),link=new Map(),hov=new Map(),alphas=[];
-  let men=null,grad=null,url='',size='';
+  let men=null,grad=null,url='',size='';const secVals={},rads=[],fonts=[];
   const add=(m,c,w)=>{const cc=m===dark?c:withA(c,1),k=toHex8(cc),e=m.get(k)||{c:cc,n:0};e.n+=w;m.set(k,e)};
   for(const m of src.matchAll(/([^{}]+)\{([^{}]*)\}/g)){
     const sel=m[1].trim(),hv=/:hover|:active|:focus|\[aria-selected=true\]/.test(sel);
@@ -356,12 +393,15 @@ function ruleTheme(css){
       const p=d.slice(0,i).trim().toLowerCase(),v=d.slice(i+1).replace(/!important/i,'').trim();
       if(/^background(-color|-image)?$/.test(p)){
         const um=v.match(/url\(\s*["']?(https?:[^"')]+)/i);if(um&&!url)url=um[1];
+        if(!/gradient\(/i.test(v))for(const [k,re] of SECRE)if(re.test(sel)&&!(k in secVals)){const c0=cols(v)[0];if(c0&&c0[3]>=.05)secVals[k]=Math.round(c0[3]*100)}
         if(/gradient\(/i.test(v)){if(!grad){const g=cols(v);if(g.length>=2)grad=g}continue}
         for(const c of cols(v)){if(c[3]<.05)continue;const h=hsl(c);
           if(h.s>.25&&h.l>.12&&h.l<.92){add(sat,c,1);if(hv)add(hov,c,1)}
           else if(h.l<.3){add(dark,c,1);if(c[3]<.95)alphas.push(c[3])}
           if(mn&&!men&&h.s>.25)men=c}
       }else if(p==='background-size'){if(!size)size=v}
+      else if(p==='border-radius'){const mm=v.match(/^(\d+)px$/);if(mm&&+mm[1]>0&&+mm[1]<=24)rads.push(+mm[1])}
+      else if(p==='font-size'){const mm=v.match(/^(\d+)px$/);if(mm&&+mm[1]>=11&&+mm[1]<=18)fonts.push(+mm[1])}
       else if(p==='color'){for(const c of cols(v)){const h=hsl(c);
         if(h.l>.5&&h.s<.25)add(tx,c,1);else if(h.s>.25){add(sat,c,.7);if(lk)add(link,c,1)}}}
       else if(/^(border|border-color|outline)/.test(p)){for(const c of cols(v))if(hsl(c).s>.25)add(sat,c,.5)}
@@ -388,7 +428,9 @@ function ruleTheme(css){
   const out={manifest:{api_version:1,id:`local-theme-${slug}`,name,version:meta('version')||'1.0.0',author:CREDIT,license:'CC0-1.0',source:url,kind:'theme',capabilities:[],actions:[]},
     theme:{light:{colors:{accent:colors.accent},backdrop:null},dark:{colors,backdrop:grad?[toHex8(withA(grad[0],1)),toHex8(withA(grad[1],1))]:null},
       style:{transparency_blur:!!(sa.length||url),transparency:Math.max(0,Math.min(100,Math.round((1-med)*100))),blur:35}}};
-  pendingBg=url||null;pendingFit=size;
+  const modeOf=a=>{if(!a.length)return;const k={};a.forEach(x=>k[x]=(k[x]||0)+1);return +Object.keys(k).sort((x,y)=>k[y]-k[x])[0]};
+  const rr=modeOf(rads),ff=modeOf(fonts);if(ff)out.theme.style.body_size=ff;if(rr)out.theme.style.window_radius=rr;
+  pendingSec=secVals;pendingBg=url||null;pendingFit=size;
   ruleNote='This CSS has no variables, so the palette was guessed from its rules (approximate).';
   return JSON.stringify(out);
 }
@@ -399,8 +441,7 @@ async function fetchBg(url,seq){
     if(!r.ok)throw new Error('HTTP '+r.status);
     const u=Array.from(new Uint8Array(await r.arrayBuffer()));
     if(seq!==runSeq)return;
-    const d=JSON.parse($('out').value),sv=Math.max(0,Math.min(100,100-d.theme.style.transparency));
-    d.theme.dark.background={opacity:100,fit:/contain|cover/.test(pendingFit)?pendingFit:'cover',target:'window',sections:{top_bar:sv,server_list:sv,channel_list:sv,message_list:sv,member_list:sv,composer:sv}};
+    const d=JSON.parse($('out').value);d.theme.dark.background=bgBlock(d);
     $('out').value=JSON.stringify(Object.assign({background_image:u,cover_image:u},d));
     msg(ruleNote+' Background image downloaded and embedded.');preview();
   }catch(e){if(seq===runSeq)msg(ruleNote+' The background image could not be downloaded (the host blocks it); add it in Serein manually.')}
@@ -467,27 +508,84 @@ function setDir(d){
   run();
 }
 function msg(t,err){const m=$('msg');m.textContent=t;m.className=err?'err':''}
+/* ---------- v1.7: image upload, color editor, light preview, batch ---------- */
+let userImg=null,pvMode='dark',pendingSec={};
+const DEF={dark:{chat:'#313338',sidebar:'#2b2d31',base:'#1e1f22',raised:'#383a40',text:'#f2f3f5',muted:'#949ba4',acc:'#5865f2',link:'#00a8fc',men:'rgba(88,101,242,.3)',pos:'#23a55a'},
+  light:{chat:'#ffffff',sidebar:'#f2f3f5',base:'#e3e5e8',raised:'#ebedef',text:'#313338',muted:'#5c5e66',acc:'#5865f2',link:'#006ce7',men:'rgba(88,101,242,.15)',pos:'#248046'}};
+function bgBlock(d){const sv=Math.max(0,Math.min(100,100-((d.theme.style&&d.theme.style.transparency)||0)));
+  return {opacity:100,fit:/contain|cover/.test(pendingFit)?pendingFit:'cover',target:'window',sections:Object.assign({top_bar:sv,server_list:sv,channel_list:sv,message_list:sv,member_list:sv,composer:sv},pendingSec)}}
+function injectImg(str){const d=JSON.parse(str);delete d.background_image;delete d.cover_image;d.theme.dark.background=bgBlock(d);
+  return JSON.stringify(Object.assign({background_image:userImg,cover_image:userImg},d))}
 function showSwatches(){
   const sw=$('sw');sw.innerHTML='';
-  const src=dir==='s2c'?$('inp').value:$('out').value;
-  let d;try{d=JSON.parse(src)}catch(e){return}
-  const cols=(d.theme&&d.theme.dark&&d.theme.dark.colors)||{};
-  const items=Object.entries(cols);
-  (d.theme&&d.theme.dark&&d.theme.dark.backdrop||[]).forEach((c,i)=>items.push(['backdrop '+(i+1),c]));
+  const ta=dir==='s2c'?$('inp'):$('out');let d;try{d=JSON.parse(ta.value)}catch(e){return}
+  const t=d.theme&&d.theme[pvMode];if(!t)return;
+  const items=Object.entries(t.colors||{});
+  (t.backdrop||[]).forEach((c,i)=>items.push(['backdrop '+(i+1),c]));
   for(const [k,v] of items){const c=parseColor(v);if(!c)continue;
-    const el=document.createElement('div');const i=document.createElement('i');const b=document.createElement('b');
-    b.style.background=toCss(c);i.appendChild(b);el.appendChild(i);el.appendChild(document.createTextNode(k+' '+v));sw.appendChild(el);}
+    const el=document.createElement('label'),i=document.createElement('i'),b=document.createElement('b'),inp=document.createElement('input'),s1=document.createElement('span');
+    el.title='Click to edit';b.style.background=toCss(c);inp.type='color';
+    inp.value='#'+[0,1,2].map(n=>hex2(c[n]).toLowerCase()).join('');
+    inp.oninput=()=>{b.style.background=inp.value};
+    inp.onchange=()=>editColor(k,inp.value,c[3]);
+    s1.textContent=k;i.append(b,inp);el.append(i,s1,document.createTextNode(' '+v));sw.appendChild(el)}
+  if(!items.length){const e=document.createElement('div');e.className='none';e.textContent='No colors defined for this mode in the theme; the preview uses Discord defaults.';sw.appendChild(e)}
+}
+function editColor(k,hex,alpha){
+  const ta=dir==='s2c'?$('inp'):$('out');let d;try{d=JSON.parse(ta.value)}catch(e){return}
+  const t=d.theme[pvMode],val=hex.toUpperCase()+hex2(alpha*255),m=k.match(/^backdrop (\d)$/);
+  if(m){t.backdrop=t.backdrop||[];t.backdrop[m[1]-1]=val}else{t.colors=t.colors||{};t.colors[k]=val}
+  ta.value=JSON.stringify(d);
+  if(dir==='s2c')run();else{showSwatches();preview();msg('Color updated in the output.')}
+}
+function setPv(m){pvMode=m;$('pvD').setAttribute('aria-pressed',m==='dark');$('pvL').setAttribute('aria-pressed',m==='light');showSwatches();preview()}
+/* zip (store) */
+const CRCT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+const crc32=u=>{let c=~0;for(let i=0;i<u.length;i++)c=CRCT[(c^u[i])&255]^(c>>>8);return(~c)>>>0};
+function makeZip(files){
+  const enc=new TextEncoder(),parts=[],cd=[];let off=0;
+  for(const f of files){const nm=enc.encode(f.name),crc=crc32(f.data),sz=f.data.length;
+    const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(12,0x21,true);h.setUint32(14,crc,true);h.setUint32(18,sz,true);h.setUint32(22,sz,true);h.setUint16(26,nm.length,true);
+    parts.push(new Uint8Array(h.buffer),nm,f.data);
+    const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(14,0x21,true);c.setUint32(16,crc,true);c.setUint32(20,sz,true);c.setUint32(24,sz,true);c.setUint16(28,nm.length,true);c.setUint32(42,off,true);
+    cd.push(new Uint8Array(c.buffer),nm);off+=30+nm.length+sz}
+  const cl=cd.reduce((a,b)=>a+b.length,0),e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cl,true);e.setUint32(16,off,true);
+  return new Blob([...parts,...cd,new Uint8Array(e.buffer)],{type:'application/zip'});
+}
+function convertOne(text,fname){
+  const isJson=text.trim().startsWith('{');pendingBg=null;ruleNote='';
+  let out=isJson?serein2css(text):css2serein(text);
+  if(!isJson&&userImg)out=injectImg(out);
+  const base=fname.replace(/\.(serein-extension|theme\.css|css|json)$/i,'')||'theme';
+  return {name:base+(isJson?'.theme.css':'.serein-extension'),out,note:ruleNote,noBg:!isJson&&!!pendingBg&&!userImg};
+}
+async function runBatch(files){
+  const ok=[],box=$('batch');box.innerHTML='';box.hidden=false;
+  const head=document.createElement('div');head.className='bh';box.appendChild(head);
+  const used=new Set();let bad=0;
+  for(const f of files){
+    const row=document.createElement('div');row.className='br';const a=document.createElement('span'),b=document.createElement('span');a.textContent=f.name;row.append(a,b);box.appendChild(row);
+    try{const r=convertOne(await f.text(),f.name);let n=r.name,i=2;while(used.has(n))n=r.name.replace(/(\.[^.]+(\.css)?)$/,' ('+(i++)+')$1');used.add(n);
+      ok.push({name:n,data:new TextEncoder().encode(r.out)});b.textContent='→ '+n+(r.note?' · palette guessed':'')+(r.noBg?' · no wallpaper':'')}
+    catch(e){bad++;b.textContent='Error: '+(e.message||e);b.className='bad'}
+  }
+  head.textContent=`Batch · ${ok.length} converted${bad?`, ${bad} failed`:''}`;
+  if(ok.length){const bt=document.createElement('button');bt.className='btn main';bt.textContent='Download ZIP';
+    bt.onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(makeZip(ok));a.download='converted-themes.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500)};head.appendChild(bt)}
+  pendingBg=null;ruleNote='';
 }
 function run(){
   const v=$('inp').value.trim();pendingBg=null;ruleNote='';runSeq++;
   if(!v){$('out').value='';msg('');$('sw').innerHTML='';return}
   try{
-    $('out').value=dir==='s2c'?serein2css(v):css2serein(v);
+    {let o=dir==='s2c'?serein2css(v):css2serein(v);if(dir==='c2s'&&userImg){o=injectImg(o);pendingBg=null}$('out').value=o}
     msg(ruleNote||'Converted.');if(dir==='c2s'&&pendingBg)fetchBg(pendingBg,runSeq);
   }catch(e){$('out').value='';msg('Error: '+(e.message||e),true)}
   showSwatches();preview();
 }
 function load(text,filename){
+  $('batch').hidden=true;
   const t=text.trim();
   const isJson=t.startsWith('{');
   if(isJson!==(dir==='s2c'))setDir(isJson?'s2c':'c2s');
@@ -499,14 +597,14 @@ let imgKey=-1,imgUrl='';
 function preview(){
   const m=$('mock');let d;
   try{d=JSON.parse(dir==='s2c'?$('inp').value:$('out').value)}catch(e){return}
-  const t=d.theme&&d.theme.dark;if(!t)return;
-  const c=t.colors||{},sec=(t.background&&t.background.sections)||{},st=d.theme.style||{};
+  const t=d.theme&&d.theme[pvMode];if(!t)return;
+  const D=DEF[pvMode],c=t.colors||{},sec=(t.background&&t.background.sections)||{},st=d.theme.style||{};
   const g=(k,f)=>{const x=parseColor(c[k]);return x?toCss(x):f};
   const set=(n,v)=>m.style.setProperty(n,v);
-  set('--m-chat',g('chat','#313338'));set('--m-side',g('sidebar','#2b2d31'));set('--m-base',g('base','#1e1f22'));
-  set('--m-raised',g('raised','#383a40'));set('--m-text',g('text','#f2f3f5'));set('--m-muted',g('muted','#949ba4'));
-  set('--m-acc',g('accent','#5865f2'));set('--m-link',g('link',g('accent','#00a8fc')));
-  set('--m-menbg',g('mention_bg','rgba(88,101,242,.3)'));set('--m-pos',g('positive',g('accent','#23a55a')));
+  set('--m-chat',g('chat',D.chat));set('--m-side',g('sidebar',D.sidebar));set('--m-base',g('base',D.base));
+  set('--m-raised',g('raised',D.raised));set('--m-text',g('text',D.text));set('--m-muted',g('muted',D.muted));
+  set('--m-acc',g('accent',D.acc));set('--m-link',g('link',g('accent',D.link)));
+  set('--m-menbg',g('mention_bg',D.men));set('--m-pos',g('positive',g('accent',D.pos)));
   [['top','top_bar'],['srv','server_list'],['ch','channel_list'],['msg','message_list'],['mem','member_list'],['comp','composer']].forEach(([a,b])=>set('--o-'+a,(sec[b]??100)+'%'));
   if(st.window_radius!=null)set('--rad',st.window_radius+'px');
   if(st.body_size)set('--bs',st.body_size+'px');if(st.heading_size)set('--hs',st.heading_size+'px');if(st.monospace_size)set('--ms',(st.monospace_size+2)+'px');
@@ -525,11 +623,15 @@ $('inp').addEventListener('input',run);
 $('d1').onclick=()=>setDir('s2c');$('d2').onclick=()=>setDir('c2s');
 $('sample').onclick=()=>{dir='s2c';$('inp').value=SAMPLE_S;setDir('s2c')};
 $('swap').onclick=()=>{const o=$('out').value;if(!o)return;setDir(dir==='s2c'?'c2s':'s2c');$('inp').value=o;run()};
-$('file').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>load(t,f.name))};
+$('file').onchange=e=>{const fs=[...e.target.files];e.target.value='';if(fs.length>1)runBatch(fs);else if(fs[0])fs[0].text().then(t=>load(t,fs[0].name))};
+$('imgFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(!f.type.startsWith('image/')){msg('That is not an image file.',true);return}
+  userImg=Array.from(new Uint8Array(await f.arrayBuffer()));$('imgName').textContent=f.name;$('imgClear').hidden=false;run()};
+$('imgClear').onclick=()=>{userImg=null;$('imgName').textContent='';$('imgClear').hidden=true;run()};
+$('pvD').onclick=()=>setPv('dark');$('pvL').onclick=()=>setPv('light');
 const drop=$('drop');
 ['dragenter','dragover'].forEach(n=>drop.addEventListener(n,e=>{e.preventDefault();drop.classList.add('over')}));
 ['dragleave','drop'].forEach(n=>drop.addEventListener(n,e=>{e.preventDefault();drop.classList.remove('over')}));
-drop.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)f.text().then(t=>load(t,f.name))});
+drop.addEventListener('drop',e=>{const fs=[...e.dataTransfer.files];if(fs.length>1)runBatch(fs);else if(fs[0])fs[0].text().then(t=>load(t,fs[0].name))});
 $('copy').onclick=async()=>{
   const o=$('out');o.select();
   try{await navigator.clipboard.writeText(o.value);msg('Copied.')}catch(e){document.execCommand('copy');msg('Copied.')}
