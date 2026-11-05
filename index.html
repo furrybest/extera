@@ -6,13 +6,13 @@
 <title>Serein ⇄ Discord CSS converter</title>
 <meta name="description" content="Convert Serein themes to Discord CSS and back, with a live preview.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0e0f11;--surf:#141518;--line:#25272c;--ink:#e7e8ea;--sub:#868a94;--btn:#e7e8ea;--btnT:#0e0f11;--code:#0b0c0e;--codeT:#c9ccd3;--err:#ff6b6b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-:root[data-theme="light"]{--bg:#f5f5f3;--surf:#fff;--line:#dcdcd7;--ink:#141517;--sub:#6b6e75;--btn:#141517;--btnT:#fff;--code:#fbfbfa;--codeT:#25272b;--err:#c4332b}
+:root{--bg:#111111;--surf:#161514;--line:rgba(255,255,255,.11);--ink:#f2f0ee;--sub:#9a9591;--btn:#ff6a2b;--btnT:#140a05;--acc:#ff6a2b;--code:#0d0d0d;--codeT:#dad7d3;--err:#ff6b6b;--node:rgba(255,255,255,.22);--dot:rgba(255,255,255,.07);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="light"]{--bg:#f7f5f2;--surf:#fff;--line:rgba(30,20,10,.14);--ink:#1a1512;--sub:#6d655f;--btn:#e8530f;--btnT:#fff;--acc:#e8530f;--code:#fbfaf8;--codeT:#2a2420;--err:#c4332b;--node:rgba(0,0,0,.25);--dot:rgba(0,0,0,.09)}
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
 main{max-width:1160px;margin:0 auto;padding:20px 24px 64px}
 header.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--line);font:500 13px "IBM Plex Mono",ui-monospace,monospace}
 header.top button{background:none;border:0;color:var(--sub);font:inherit;cursor:pointer;padding:4px 0}
@@ -23,17 +23,17 @@ h1{font-size:clamp(28px,4.4vw,44px);line-height:1.1;letter-spacing:-.025em;font-
 .tool.over{outline:2px solid var(--ink);outline-offset:-2px}
 .bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:stretch;border-bottom:1px solid var(--line)}
 .tabs{display:flex}
-.tabs button{background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--sub);padding:13px 18px;font:500 14px "IBM Plex Sans",sans-serif;cursor:pointer}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--sub);padding:13px 18px;font:500 14px "Instrument Sans",sans-serif;cursor:pointer}
 .tabs button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--ink)}
 .acts{display:flex;gap:6px;align-items:center;padding:0 10px}
-.btn{border:1px solid var(--line);background:none;color:var(--ink);border-radius:6px;padding:7px 12px;font:500 13px "IBM Plex Sans",sans-serif;cursor:pointer}
+.btn{border:1px solid var(--line);background:none;color:var(--ink);border-radius:6px;padding:7px 12px;font:500 13px "Instrument Sans",sans-serif;cursor:pointer}
 .btn:hover{border-color:var(--sub)}
 .btn.main{background:var(--btn);color:var(--btnT);border-color:var(--btn)}
 .btn.main:hover{opacity:.88}
 :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 .opts{display:flex;flex-wrap:wrap;gap:10px 22px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--sub);align-items:center}
 .opts label{display:flex;gap:8px;align-items:center}
-.opts input[type=text],.opts select{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font:13px "IBM Plex Sans",sans-serif;max-width:200px}
+.opts input[type=text],.opts select{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font:13px "Instrument Sans",sans-serif;max-width:200px}
 .opts input[type=checkbox]{width:15px;height:15px;accent-color:var(--ink)}
 .panes{display:grid;grid-template-columns:1fr 1fr}
 .pane{min-width:0}
@@ -51,7 +51,7 @@ h2{font-size:13px;font:500 12px "IBM Plex Mono",monospace;text-transform:upperca
 .sw i{width:18px;height:18px;border-radius:4px;border:1px solid var(--line);position:relative;overflow:hidden;flex:none;background:repeating-conic-gradient(#8885 0 25%,transparent 0 50%) 0 0/8px 8px}
 .sw i b{position:absolute;inset:0}
 .sw span{color:var(--ink)}
-.mock{--m-chat:#313338;--m-side:#2b2d31;--m-base:#1e1f22;--m-raised:#383a40;--m-text:#f2f3f5;--m-muted:#949ba4;--m-acc:#5865f2;--m-link:#00a8fc;--m-menbg:rgba(88,101,242,.3);--m-pos:#23a55a;--o-top:100%;--o-srv:100%;--o-ch:100%;--o-msg:100%;--o-mem:100%;--o-comp:100%;--rad:8px;--bs:14px;--hs:19px;--ms:12px;display:grid;grid-template-columns:68px 210px 1fr 190px;grid-template-rows:46px 1fr;height:420px;border-radius:var(--rad);overflow:hidden;border:1px solid var(--line);background:#1a1b1e center/cover no-repeat;color:var(--m-text);font:var(--bs)/1.45 "IBM Plex Sans",sans-serif}
+.mock{--m-chat:#313338;--m-side:#2b2d31;--m-base:#1e1f22;--m-raised:#383a40;--m-text:#f2f3f5;--m-muted:#949ba4;--m-acc:#5865f2;--m-link:#00a8fc;--m-menbg:rgba(88,101,242,.3);--m-pos:#23a55a;--o-top:100%;--o-srv:100%;--o-ch:100%;--o-msg:100%;--o-mem:100%;--o-comp:100%;--rad:8px;--bs:14px;--hs:19px;--ms:12px;display:grid;grid-template-columns:68px 210px 1fr 190px;grid-template-rows:46px 1fr;height:420px;border-radius:var(--rad);overflow:hidden;border:1px solid var(--line);background:#1a1b1e center/cover no-repeat;color:var(--m-text);font:var(--bs)/1.45 "Instrument Sans",sans-serif}
 @media(max-width:900px){.mock{grid-template-columns:60px 1fr}.mock .ch,.mock .mem{display:none}.mock .chat{grid-column:2}}
 .mock>*{min-width:0}
 .mock .top{grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:0 16px;font-weight:600;background:color-mix(in srgb,var(--m-side) var(--o-top),transparent);border-bottom:1px solid #0003}
@@ -79,16 +79,79 @@ h2{font-size:13px;font:500 12px "IBM Plex Mono",monospace;text-transform:upperca
 .how li{border-top:1px solid var(--line);padding-top:12px}.how b{display:block;color:var(--ink);font-weight:500;margin-bottom:2px}
 @media(max-width:760px){.how{grid-template-columns:1fr;gap:16px}}
 footer{margin-top:48px;color:var(--sub);font:12px "IBM Plex Mono",monospace}
+
+dialog#log{margin:0 0 0 auto;height:100%;max-height:100%;width:min(440px,100%);border:0;border-left:1px solid var(--line);background:var(--surf);color:var(--ink);padding:0;font:14px/1.55 "Instrument Sans",system-ui,sans-serif}
+dialog#log::backdrop{background:rgba(0,0,0,.55)}
+dialog#log[open]{display:flex;flex-direction:column;animation:slide .18s ease-out}
+@keyframes slide{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+.lh{display:flex;justify-content:space-between;align-items:center;padding:calc(14px + env(safe-area-inset-top,0px)) 20px 14px;border-bottom:1px solid var(--line);font:500 13px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.05em}
+.lh button{background:none;border:1px solid var(--line);color:var(--ink);border-radius:6px;padding:5px 10px;font:500 12px "Instrument Sans",sans-serif;cursor:pointer;text-transform:none;letter-spacing:0}
+.lb{overflow:auto;padding:6px 20px calc(24px + env(safe-area-inset-bottom,0px))}
+.lb section{padding:18px 0;border-bottom:1px solid var(--line)}
+.lb section:last-child{border-bottom:0}
+.lb h3{margin:0 0 8px;font:500 13px "IBM Plex Mono",monospace;display:flex;gap:10px;align-items:center}
+.lb h3 span{color:var(--sub);font-weight:400}
+.lb ul{margin:0;padding-left:18px;color:var(--sub)}
+.lb li{margin:3px 0}.lb li b{color:var(--ink);font-weight:500}
+header.top .hr{display:flex;gap:18px}
+@media(prefers-reduced-motion:reduce){dialog#log[open]{animation:none}}
+
+/* ---- Cloudflare-style layer ---- */
+body{background-color:var(--bg);background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:16px 16px}
+main{position:relative;max-width:1260px;padding:0 44px 72px;background:var(--bg)}
+main::before,main::after{content:"";position:absolute;top:0;bottom:0;width:1px;pointer-events:none;background:repeating-linear-gradient(to bottom,var(--line) 0 5px,transparent 5px 10px)}
+main::before{left:0}main::after{right:0}
+@media(max-width:700px){main{padding:0 16px 56px}}
+header.top{height:68px;padding:0;border-bottom:1px dashed var(--line);align-items:center}
+header.top .lg{display:flex;align-items:center;gap:12px;font:500 14px "IBM Plex Mono",monospace;color:var(--ink)}
+header.top .lg b{display:grid;place-items:center;width:30px;height:30px;color:var(--acc);border:1px dashed var(--acc);font-weight:500}
+header.top button{font:500 13px "IBM Plex Mono",monospace}
+header.top #logBtn{background:var(--acc);color:var(--btnT);border-radius:999px;padding:9px 18px;font:600 14px "Instrument Sans",sans-serif}
+header.top #logBtn:hover{opacity:.9;color:var(--btnT)}
+.tag,h2,#inT,#outT{display:inline-flex;align-items:center;gap:8px;border:1px dashed var(--acc);color:var(--acc);padding:5px 10px;font:500 12.5px "IBM Plex Mono",monospace;text-transform:none;letter-spacing:0}
+.tag{margin:64px 0 22px}
+h1{margin:0 0 16px;font-size:clamp(36px,5.6vw,66px);font-weight:500;letter-spacing:-.035em;line-height:1.04;max-width:17ch}
+.lead{font-size:17px;margin-bottom:56px}
+h2{margin:64px 0 20px;background:none}
+#inT,#outT{padding:3px 8px;font-size:12px}
+.tool,.fr{position:relative}
+.tool{border-radius:0;overflow:visible;background:var(--surf)}
+.tool::after,.fr::after{content:"";position:absolute;inset:-4px;pointer-events:none;z-index:3;background:linear-gradient(var(--node),var(--node)) 0 0/8px 8px no-repeat,linear-gradient(var(--node),var(--node)) 100% 0/8px 8px no-repeat,linear-gradient(var(--node),var(--node)) 0 100%/8px 8px no-repeat,linear-gradient(var(--node),var(--node)) 100% 100%/8px 8px no-repeat}
+.mock{border-radius:var(--rad)}
+.tabs button[aria-pressed="true"]{border-bottom-color:var(--acc)}
+.btn{border-radius:999px;padding:7px 15px}
+.btn.main{background:var(--acc);border-color:var(--acc);color:var(--btnT);font-weight:600}
+.opts input[type=text],.opts select{border-radius:4px}
+.opts input[type=checkbox]{accent-color:var(--acc)}
+:focus-visible{outline-color:var(--acc)}
+.tool.over{outline-color:var(--acc)}
+.ph{border-bottom:1px dashed var(--line)}
+.bar,.opts{border-bottom-style:dashed}
+.pane+.pane{border-left-style:dashed}
+.sw{border-radius:0;gap:0;background:none;border:0;border-left:1px solid var(--line);border-top:1px solid var(--line)}
+.sw div{border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.how{gap:0;margin-top:72px;border:1px solid var(--line);position:relative;counter-reset:none}
+.how li{border-top:0;padding:0;border-right:1px solid var(--line);background:var(--surf)}
+.how li:last-child{border-right:0}
+.how .art{display:grid;place-items:center;height:150px;border-bottom:1px solid var(--line);background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:14px 14px}
+.how .art i{display:grid;place-items:center;width:64px;height:64px;border:1.5px solid var(--acc);border-radius:16px;color:var(--acc);font:500 18px "IBM Plex Mono",monospace;font-style:normal;background:var(--bg)}
+.how .tx{padding:18px 20px 22px}
+.how .tx b{font-size:15px;margin-bottom:4px}
+@media(max-width:760px){.how li{border-right:0;border-bottom:1px solid var(--line)}.how li:last-child{border-bottom:0}}
+footer{margin-top:64px;padding-top:18px;border-top:1px dashed var(--line)}
+.lb h3 span{color:var(--acc)}
+dialog#log{border-left-style:dashed}
 </style>
 </head>
 <body>
 <main>
-<header class="top"><span>serein ⇄ discord-css</span><button id="theme">Light / Dark</button></header>
+<header class="top"><span class="lg"><b>⇄</b>serein-discord</span><div class="hr"><button id="logBtn" aria-haspopup="dialog">Changelog</button><button id="theme">Light / Dark</button></div></header>
 
+<div class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Serein ⇄ Discord CSS</div>
 <h1>Convert Serein themes to Discord CSS, and back.</h1>
 <p class="lead">Drop a <code>.serein-extension</code> or a CSS file. Colors, background images, section opacity and sizes carry over in both directions. Everything runs in your browser.</p>
 
-<div class="tool" id="drop">
+<div class="tool fr" id="drop">
   <div class="bar">
     <div class="tabs" role="group" aria-label="Direction">
       <button id="d1" aria-pressed="true">Serein → CSS</button>
@@ -115,26 +178,50 @@ footer{margin-top:48px;color:var(--sub);font:12px "IBM Plex Mono",monospace}
 
 <h2>Preview · dark mode</h2>
 <div class="sw" id="sw"></div>
-<div class="mock" id="mock" aria-label="Discord mockup using the theme colors">
+<div class="fr"><div class="mock" id="mock" aria-label="Discord mockup using the theme colors">
   <div class="top"># general <small>· preview</small></div>
   <div class="srv"><i>D</i><i>A</i><i>M</i><i>+</i></div>
   <div class="ch"><p>Text channels</p><div># general</div><div class="on"># music</div><div># links</div><p>Voice channels</p><div>Lounge</div></div>
   <div class="chat">
     <div class="msg"><div class="av"></div><div><b>Atsukoro</b><em>Today</em><span>Hey <span class="men">@everyone</span>, how does the theme look?</span></div></div>
-    <div class="msg"><div class="av" style="opacity:.6"></div><div><b>Sakura</b><em>Today</em><span>Nice colors. <a href="#">example.com/theme</a> and <code>--brand-500</code></span></div></div>
+    <div class="msg"><div class="av" style="opacity:.6"></div><div><b>Sakura</b><em>Today</em><span>Nice colors. <a href="https://extera.is-a.dev/#" target="_blank" rel="noopener">example.com/theme</a> and <code>--brand-500</code></span></div></div>
     <h4>Heading text</h4>
     <div class="comp">Message #music</div>
   </div>
   <div class="mem"><p>Online — 3</p><div><i></i>Atsukoro</div><div><i></i>Sakura</div><div><i></i>Kona</div></div>
-</div>
+</div></div>
 
 <ol class="how">
-  <li><b>1. Load</b>Open or drop a file. The direction is detected from its contents.</li>
-  <li><b>2. Choose a format</b>Standard Discord variables or Discord Mica.</li>
-  <li><b>3. Download</b>Images and section opacity round-trip back into Serein.</li>
+  <li><span class="art"><i>01</i></span><div class="tx"><b>Load</b>Open or drop a file. The direction is detected from its contents.</div></li>
+  <li><span class="art"><i>02</i></span><div class="tx"><b>Choose a format</b>Standard Discord variables or Discord Mica.</div></li>
+  <li><span class="art"><i>03</i></span><div class="tx"><b>Download</b>Images and section opacity round-trip back into Serein.</div></li>
 </ol>
 <footer>Works with Serein themes and BetterDiscord / Vencord / Discord Mica CSS.</footer>
 </main>
+
+<dialog id="log" aria-labelledby="logT">
+  <div class="lh"><span id="logT">Changelog</span><button id="logX">Close</button></div>
+  <div class="lb">
+    <section><h3>v1.4 <span>latest</span></h3><ul>
+      <li><b>Newer Discord variables.</b> Recognizes <code>--background-base-*</code>, <code>--background-surface-high</code> and <code>--text-default</code>.</li>
+      <li><b>Parser fix.</b> A last declaration without a trailing semicolon is no longer skipped.</li>
+      <li><b>Clearer errors.</b> Shows which variables were found, or says the file has none.</li>
+      <li>Preview link now points to extera.is-a.dev.</li></ul></section>
+    <section><h3>v1.3</h3><ul>
+      <li><b>Fixed credit.</b> Converted files always carry the made-by credit; the author field was removed.</li>
+      <li>Output panel is read-only.</li></ul></section>
+    <section><h3>v1.2</h3><ul>
+      <li><b>New design.</b> Neutral dark theme with a light option, English interface.</li>
+      <li><b>Live preview.</b> Discord mockup and palette built from the loaded theme.</li>
+      <li>Starts empty; the example loads on request.</li></ul></section>
+    <section><h3>v1.1</h3><ul>
+      <li><b>Full Serein support.</b> Background and cover images, extra colors (hover, link, mention, positive, warning), per-section opacity, font sizes, spacing and window radius.</li>
+      <li><b>Standard Discord CSS</b> output next to Discord Mica.</li>
+      <li>Lossless round trip between Serein and CSS.</li></ul></section>
+    <section><h3>v1.0</h3><ul>
+      <li>First release: Serein theme to Discord Mica CSS and back.</li></ul></section>
+  </div>
+</dialog>
 
 <script>
 
@@ -168,9 +255,9 @@ const shade=(c,k)=>[c[0]*k,c[1]*k,c[2]*k,c[3]];
 
 /* ---------- соответствия ---------- */
 const NATIVE={
-  chat:['background-primary','chat-background'],sidebar:['background-secondary','background-secondary-alt'],base:['background-tertiary'],
-  raised:['background-floating','channeltextarea-background'],muted:['text-muted','interactive-muted'],
-  text:['text-normal','header-primary','header-secondary','interactive-normal','interactive-hover','interactive-active'],
+  chat:['background-primary','background-base-low','chat-background'],sidebar:['background-secondary','background-base-lower','background-secondary-alt'],base:['background-tertiary','background-base-lowest'],
+  raised:['background-floating','background-surface-high','channeltextarea-background'],muted:['text-muted','interactive-muted'],
+  text:['text-normal','text-default','header-primary','header-secondary','interactive-normal','interactive-hover','interactive-active'],
   accent:['brand-500','brand-experiment'],hover:['background-modifier-hover'],link:['text-link'],
   mention_bg:['mention-background'],mention_text:['mention-foreground'],
   positive:['text-positive','status-positive'],warning:['text-warning','status-warning'],danger:['text-danger','status-danger']
@@ -248,11 +335,14 @@ function css2serein(css){
   const dark={},light={},all={};
   for(const b of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)){
     const T=/theme-light/.test(b[1])?light:dark;
-    for(const m of b[2].matchAll(/--([a-z0-9-]+)\s*:\s*([^;]+);/gi)){const v=m[2].trim();T[m[1]]=v;all[m[1]]=v}
+    for(const m of b[2].matchAll(/--([a-z0-9-]+)\s*:\s*([^;]+)(?:;|$)/gi)){const v=m[2].trim();T[m[1]]=v;all[m[1]]=v}
   }
   const keys=Object.keys(all);
   const isMica=keys.some(k=>/^(dark|light)-/.test(k));
-  if(!isMica&&!keys.some(k=>/^(background-|brand-|text-normal|serein-)/.test(k)))throw new Error('No Discord variables found (--background-primary, --brand-500, ... or Mica --dark-*/--light-*).');
+  if(!isMica&&!keys.some(k=>/^(background-|brand-|text-normal|text-default|serein-)/.test(k))){
+    const found=keys.slice(0,6).map(k=>'--'+k).join(', ');
+    throw new Error(keys.length?`None of the ${keys.length} CSS variables are recognized (found: ${found}). Expected --background-primary, --brand-500, --text-normal or Mica --dark-*/--light-*.`:'No CSS variables found. This file has no "--name: value;" declarations (it may only @import another stylesheet), so there are no colors to convert.');
+  }
   const meta=k=>{const m=css.match(new RegExp('@'+k+'[ \\t]+(.*)'));return m?m[1].trim():''};
   const name=$('oName').value||meta('name')||'Converted theme',author=CREDIT;
   const num=k=>{const v=parseFloat(all[k]);return isNaN(v)?undefined:v};
@@ -346,6 +436,10 @@ function preview(){
   else{imgKey=-1;const b=t.backdrop;const b1=b&&parseColor(b[0]),b2=b&&parseColor(b[1]);m.style.backgroundImage=b1&&b2?`linear-gradient(135deg,${toCss(b1)},${toCss(b2)})`:'';}
   const bg=t.background&&t.background.fit;m.style.backgroundSize=bg||'cover';
 }
+const logD=$('log');
+$('logBtn').onclick=()=>logD.showModal();
+$('logX').onclick=()=>logD.close();
+logD.addEventListener('click',e=>{if(e.target===logD)logD.close()});
 $('theme').onclick=()=>{const r=document.documentElement;r.dataset.theme=r.dataset.theme==='light'?'dark':'light'};
 $('inp').addEventListener('input',run);
 ['oName','oLight','oFmt','oImg'].forEach(id=>$(id).addEventListener('input',run));
