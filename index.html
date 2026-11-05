@@ -202,7 +202,11 @@ dialog#log{border-left-style:dashed}
 <dialog id="log" aria-labelledby="logT">
   <div class="lh"><span id="logT">Changelog</span><button id="logX">Close</button></div>
   <div class="lb">
-    <section><h3>v1.5 <span>latest</span></h3><ul>
+    <section><h3>v1.6 <span>latest</span></h3><ul>
+      <li><b>Themes without variables.</b> CSS written as plain rules (no <code>--name</code> variables) is now converted: accent, text, link, hover, positive, warning and danger colors are picked by how often they appear.</li>
+      <li><b>Wallpaper.</b> A background image URL in the CSS is downloaded and embedded when the host allows it.</li>
+      <li>Named colors (white, silver, gold…) are understood.</li></ul></section>
+    <section><h3>v1.5</h3><ul>
       <li><b>New look.</b> Dashed frames, corner nodes, orange accent and a dotted grid background.</li>
       <li><b>Changelog button</b> moved into the header as an orange pill.</li>
       <li>Preview link now shows and opens extera.is-a.dev.</li></ul></section>
@@ -236,10 +240,12 @@ const $=id=>document.getElementById(id);
 const SAMPLE_S=`{"manifest":{"api_version":1,"id":"local-theme-18e4edd598e2be57-1","name":"Green.","version":"1.0.0","author":"catboy","license":"CC0-1.0","source":"","kind":"theme","capabilities":[],"actions":[]},"theme":{"light":{"colors":{},"backdrop":null},"dark":{"colors":{"accent":"#9CE397FF","base":"#BBE0B2FF","chat":"#D2EEC9FF","muted":"#8BE86FFF","raised":"#B8F4B6FF","sidebar":"#C7EEC5FF","text":"#B2DEAFFF"},"backdrop":["#C6F1BCFF","#9EE987FF"]},"style":{"transparency_blur":false,"transparency":15,"blur":50}}}`;
 
 /* ---------- цвета ---------- */
+const NAMED={white:[255,255,255],black:[0,0,0],silver:[192,192,192],gold:[255,215,0],red:[255,0,0],lightgreen:[144,238,144],firebrick:[178,34,34],gray:[128,128,128],grey:[128,128,128],yellow:[255,255,0],orange:[255,165,0],blue:[0,0,255],green:[0,128,0]};
 function parseColor(s){
   if(!s||typeof s!=='string')return null;
   s=s.trim().toLowerCase();
   if(s==='transparent')return [0,0,0,0];
+  if(NAMED[s])return NAMED[s].concat(1);
   let m=s.match(/^#([0-9a-f]{3,8})$/);
   if(m){let h=m[1];if(h.length===3||h.length===4)h=h.split('').map(c=>c+c).join('');
     if(h.length===6)h+='ff';if(h.length!==8)return null;
@@ -332,6 +338,74 @@ function serein2css(json){
   return css;
 }
 
+/* ---------- themes without variables: guess palette from rules ---------- */
+let pendingBg=null,pendingFit='',ruleNote='',runSeq=0;
+function hsl(c){const r=c[0]/255,g=c[1]/255,b=c[2]/255,mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2,d=mx-mn;let h=0,s=0;if(d){s=d/(1-Math.abs(2*l-1));h=mx===r?((g-b)/d)%6:mx===g?(b-r)/d+2:(r-g)/d+4;h=(h*60+360)%360}return{h,s,l}}
+function ruleTheme(css){
+  const src=css.replace(/\/\*[\s\S]*?\*\//g,'');
+  const COL=/#[0-9a-f]{3,8}\b|rgba?\([^)]*\)|\b(?:white|black|silver|gold|red|lightgreen|firebrick|gray|grey|yellow|orange|blue|green)\b/gi;
+  const cols=v=>(v.replace(/url\([^)]*\)/gi,'').match(COL)||[]).map(parseColor).filter(Boolean);
+  const sat=new Map(),dark=new Map(),tx=new Map(),link=new Map(),hov=new Map(),alphas=[];
+  let men=null,grad=null,url='',size='';
+  const add=(m,c,w)=>{const cc=m===dark?c:withA(c,1),k=toHex8(cc),e=m.get(k)||{c:cc,n:0};e.n+=w;m.set(k,e)};
+  for(const m of src.matchAll(/([^{}]+)\{([^{}]*)\}/g)){
+    const sel=m[1].trim(),hv=/:hover|:active|:focus|\[aria-selected=true\]/.test(sel);
+    const lk=sel.split(',').some(p=>/(^|\s)a(:[\w-]+)?$/.test(p.trim())),mn=/mention/i.test(sel);
+    for(const d of m[2].split(/;(?![^(]*\))/)){
+      const i=d.indexOf(':');if(i<0)continue;
+      const p=d.slice(0,i).trim().toLowerCase(),v=d.slice(i+1).replace(/!important/i,'').trim();
+      if(/^background(-color|-image)?$/.test(p)){
+        const um=v.match(/url\(\s*["']?(https?:[^"')]+)/i);if(um&&!url)url=um[1];
+        if(/gradient\(/i.test(v)){if(!grad){const g=cols(v);if(g.length>=2)grad=g}continue}
+        for(const c of cols(v)){if(c[3]<.05)continue;const h=hsl(c);
+          if(h.s>.25&&h.l>.12&&h.l<.92){add(sat,c,1);if(hv)add(hov,c,1)}
+          else if(h.l<.3){add(dark,c,1);if(c[3]<.95)alphas.push(c[3])}
+          if(mn&&!men&&h.s>.25)men=c}
+      }else if(p==='background-size'){if(!size)size=v}
+      else if(p==='color'){for(const c of cols(v)){const h=hsl(c);
+        if(h.l>.5&&h.s<.25)add(tx,c,1);else if(h.s>.25){add(sat,c,.7);if(lk)add(link,c,1)}}}
+      else if(/^(border|border-color|outline)/.test(p)){for(const c of cols(v))if(hsl(c).s>.25)add(sat,c,.5)}
+    }
+  }
+  const sorted=(m,f)=>[...m.values()].filter(f||(()=>true)).sort((a,b)=>b.n-a.n);
+  const top=(m,f)=>{const r=sorted(m,f)[0];return r&&r.c};
+  const hueIn=(a,b)=>e=>{const h=hsl(e.c).h;return a<=b?h>=a&&h<=b:h>=a||h<=b};
+  const accent=top(sat)||[88,101,242,1],text=top(tx)||[255,255,255,1];
+  const muted=top(tx,e=>toHex8(e.c)!==toHex8(text));
+  const hover=top(hov,e=>toHex8(e.c)!==toHex8(accent));
+  const op=sorted(dark,e=>e.c[3]>=.95),tr=sorted(dark,e=>e.c[3]<.95);
+  const base=(op[0]||tr[0]||{c:[17,17,17,1]}).c,chat=(tr[0]||{c:base}).c,side=((tr[1]||tr[0]||op[1])||{c:chat}).c;
+  const raised=((op.find(e=>hsl(e.c).l>.08))||op[1]||{c:side}).c;
+  const colors={},put=(k,c)=>{if(c)colors[k]=toHex8(withA(c,1))};
+  put('accent',accent);put('base',base);put('chat',chat);put('muted',muted);put('raised',raised);put('sidebar',side);put('text',text);
+  put('hover',hover);put('link',top(link));
+  if(men)colors.mention_bg=toHex8(men);colors.mention_text=toHex8(withA(text,1));
+  put('positive',top(sat,hueIn(95,175)));put('warning',top(sat,hueIn(35,65)));put('danger',top(sat,hueIn(348,12)));
+  const meta=k=>{const m=css.match(new RegExp('@'+k+'[ \\t]+(.*)'));return m?m[1].trim():''};
+  const name=$('oName').value||meta('name')||'Converted theme';
+  const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'theme';
+  const sa=alphas.sort((a,b)=>a-b),med=sa.length?sa[Math.floor(sa.length/2)]:.85;
+  const out={manifest:{api_version:1,id:`local-theme-${slug}`,name,version:meta('version')||'1.0.0',author:CREDIT,license:'CC0-1.0',source:url,kind:'theme',capabilities:[],actions:[]},
+    theme:{light:{colors:{accent:colors.accent},backdrop:null},dark:{colors,backdrop:grad?[toHex8(withA(grad[0],1)),toHex8(withA(grad[1],1))]:null},
+      style:{transparency_blur:!!(sa.length||url),transparency:Math.max(0,Math.min(100,Math.round((1-med)*100))),blur:35}}};
+  pendingBg=url||null;pendingFit=size;
+  ruleNote='This CSS has no variables, so the palette was guessed from its rules (approximate).';
+  return JSON.stringify(out);
+}
+async function fetchBg(url,seq){
+  try{
+    const ac=new AbortController(),t=setTimeout(()=>ac.abort(),20000);
+    const r=await fetch(url,{signal:ac.signal});clearTimeout(t);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const u=Array.from(new Uint8Array(await r.arrayBuffer()));
+    if(seq!==runSeq)return;
+    const d=JSON.parse($('out').value),sv=Math.max(0,Math.min(100,100-d.theme.style.transparency));
+    d.theme.dark.background={opacity:100,fit:/contain|cover/.test(pendingFit)?pendingFit:'cover',target:'window',sections:{top_bar:sv,server_list:sv,channel_list:sv,message_list:sv,member_list:sv,composer:sv}};
+    $('out').value=JSON.stringify(Object.assign({background_image:u,cover_image:u},d));
+    msg(ruleNote+' Background image downloaded and embedded.');preview();
+  }catch(e){if(seq===runSeq)msg(ruleNote+' The background image could not be downloaded (the host blocks it); add it in Serein manually.')}
+}
+
 /* ---------- CSS → Serein ---------- */
 function css2serein(css){
   const img={};
@@ -344,6 +418,7 @@ function css2serein(css){
   const keys=Object.keys(all);
   const isMica=keys.some(k=>/^(dark|light)-/.test(k));
   if(!isMica&&!keys.some(k=>/^(background-|brand-|text-normal|text-default|serein-)/.test(k))){
+    if(/(?:^|[\s;{])(?:background(?:-color)?|color)\s*:/.test(css))return ruleTheme(css);
     const found=keys.slice(0,6).map(k=>'--'+k).join(', ');
     throw new Error(keys.length?`None of the ${keys.length} CSS variables are recognized (found: ${found}). Expected --background-primary, --brand-500, --text-normal or Mica --dark-*/--light-*.`:'No CSS variables found. This file has no "--name: value;" declarations (it may only @import another stylesheet), so there are no colors to convert.');
   }
@@ -404,11 +479,11 @@ function showSwatches(){
     b.style.background=toCss(c);i.appendChild(b);el.appendChild(i);el.appendChild(document.createTextNode(k+' '+v));sw.appendChild(el);}
 }
 function run(){
-  const v=$('inp').value.trim();
+  const v=$('inp').value.trim();pendingBg=null;ruleNote='';runSeq++;
   if(!v){$('out').value='';msg('');$('sw').innerHTML='';return}
   try{
     $('out').value=dir==='s2c'?serein2css(v):css2serein(v);
-    msg('Converted.');
+    msg(ruleNote||'Converted.');if(dir==='c2s'&&pendingBg)fetchBg(pendingBg,runSeq);
   }catch(e){$('out').value='';msg('Error: '+(e.message||e),true)}
   showSwatches();preview();
 }
