@@ -1,40 +1,379 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>502 Bad Gateway</title>
-    <style>
-        body {
-            font-family: "Times New Roman", Times, serif;
-            background-color: white;
-            color: black;
-            margin: 0;
-            padding: 20px;
-        }
-        h1 {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        hr {
-            border: 0;
-            border-top: 1px solid black;
-            margin: 20px 0;
-        }
-        center {
-            display: block;
-            text-align: center;
-        }
-        .nginx {
-            font-size: 14px;
-            font-family: monospace;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Serein ⇄ Discord CSS converter</title>
+<meta name="description" content="Convert Serein themes to Discord CSS and back, with a live preview.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0f11;--surf:#141518;--line:#25272c;--ink:#e7e8ea;--sub:#868a94;--btn:#e7e8ea;--btnT:#0e0f11;--code:#0b0c0e;--codeT:#c9ccd3;--err:#ff6b6b;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+:root[data-theme="light"]{--bg:#f5f5f3;--surf:#fff;--line:#dcdcd7;--ink:#141517;--sub:#6b6e75;--btn:#141517;--btnT:#fff;--code:#fbfbfa;--codeT:#25272b;--err:#c4332b}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1160px;margin:0 auto;padding:20px 24px 64px}
+header.top{display:flex;justify-content:space-between;align-items:center;padding-bottom:16px;border-bottom:1px solid var(--line);font:500 13px "IBM Plex Mono",ui-monospace,monospace}
+header.top button{background:none;border:0;color:var(--sub);font:inherit;cursor:pointer;padding:4px 0}
+header.top button:hover{color:var(--ink)}
+h1{font-size:clamp(28px,4.4vw,44px);line-height:1.1;letter-spacing:-.025em;font-weight:600;margin:48px 0 12px;max-width:18ch}
+.lead{color:var(--sub);margin:0 0 36px;max-width:60ch}
+.tool{border:1px solid var(--line);background:var(--surf);border-radius:8px;overflow:hidden}
+.tool.over{outline:2px solid var(--ink);outline-offset:-2px}
+.bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:stretch;border-bottom:1px solid var(--line)}
+.tabs{display:flex}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;margin-bottom:-1px;color:var(--sub);padding:13px 18px;font:500 14px "IBM Plex Sans",sans-serif;cursor:pointer}
+.tabs button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.acts{display:flex;gap:6px;align-items:center;padding:0 10px}
+.btn{border:1px solid var(--line);background:none;color:var(--ink);border-radius:6px;padding:7px 12px;font:500 13px "IBM Plex Sans",sans-serif;cursor:pointer}
+.btn:hover{border-color:var(--sub)}
+.btn.main{background:var(--btn);color:var(--btnT);border-color:var(--btn)}
+.btn.main:hover{opacity:.88}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+.opts{display:flex;flex-wrap:wrap;gap:10px 22px;padding:12px 16px;border-bottom:1px solid var(--line);font-size:13px;color:var(--sub);align-items:center}
+.opts label{display:flex;gap:8px;align-items:center}
+.opts input[type=text],.opts select{background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 8px;font:13px "IBM Plex Sans",sans-serif;max-width:200px}
+.opts input[type=checkbox]{width:15px;height:15px;accent-color:var(--ink)}
+.panes{display:grid;grid-template-columns:1fr 1fr}
+.pane{min-width:0}
+.pane+.pane{border-left:1px solid var(--line)}
+@media(max-width:820px){.panes{grid-template-columns:1fr}.pane+.pane{border-left:0;border-top:1px solid var(--line)}}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 12px 0 16px;height:44px;border-bottom:1px solid var(--line);font:500 12px "IBM Plex Mono",monospace;color:var(--sub);text-transform:uppercase;letter-spacing:.05em}
+textarea{display:block;width:100%;height:400px;min-height:240px;resize:vertical;border:0;background:var(--code);color:var(--codeT);padding:16px;font:12.5px/1.65 "IBM Plex Mono",ui-monospace,Consolas,monospace;tab-size:2;white-space:pre;overflow:auto}
+textarea::placeholder{color:var(--sub)}
+#msg{min-height:24px;margin:12px 2px 0;font:13px "IBM Plex Mono",monospace;color:var(--sub)}
+#msg.err{color:var(--err)}
+h2{font-size:13px;font:500 12px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;color:var(--sub);margin:44px 0 12px}
+.sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:14px}
+.sw:empty{display:none}
+.sw div{display:flex;align-items:center;gap:10px;background:var(--surf);padding:9px 12px;font:12px "IBM Plex Mono",monospace;color:var(--sub)}
+.sw i{width:18px;height:18px;border-radius:4px;border:1px solid var(--line);position:relative;overflow:hidden;flex:none;background:repeating-conic-gradient(#8885 0 25%,transparent 0 50%) 0 0/8px 8px}
+.sw i b{position:absolute;inset:0}
+.sw span{color:var(--ink)}
+.mock{--m-chat:#313338;--m-side:#2b2d31;--m-base:#1e1f22;--m-raised:#383a40;--m-text:#f2f3f5;--m-muted:#949ba4;--m-acc:#5865f2;--m-link:#00a8fc;--m-menbg:rgba(88,101,242,.3);--m-pos:#23a55a;--o-top:100%;--o-srv:100%;--o-ch:100%;--o-msg:100%;--o-mem:100%;--o-comp:100%;--rad:8px;--bs:14px;--hs:19px;--ms:12px;display:grid;grid-template-columns:68px 210px 1fr 190px;grid-template-rows:46px 1fr;height:420px;border-radius:var(--rad);overflow:hidden;border:1px solid var(--line);background:#1a1b1e center/cover no-repeat;color:var(--m-text);font:var(--bs)/1.45 "IBM Plex Sans",sans-serif}
+@media(max-width:900px){.mock{grid-template-columns:60px 1fr}.mock .ch,.mock .mem{display:none}.mock .chat{grid-column:2}}
+.mock>*{min-width:0}
+.mock .top{grid-column:1/-1;display:flex;align-items:center;gap:10px;padding:0 16px;font-weight:600;background:color-mix(in srgb,var(--m-side) var(--o-top),transparent);border-bottom:1px solid #0003}
+.mock .top small{color:var(--m-muted);font-weight:400}
+.mock .srv{background:color-mix(in srgb,var(--m-base) var(--o-srv),transparent);display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px 0}
+.mock .srv i{width:42px;height:42px;border-radius:16px;background:var(--m-raised);display:grid;place-items:center;font-style:normal;font-weight:600}
+.mock .srv i:first-child{background:var(--m-acc);border-radius:14px}
+.mock .ch{background:color-mix(in srgb,var(--m-side) var(--o-ch),transparent);padding:12px 10px;display:flex;flex-direction:column;gap:3px}
+.mock .ch p,.mock .mem p{margin:6px 6px 4px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--m-muted);font-weight:600}
+.mock .ch div{padding:6px 10px;border-radius:6px;color:var(--m-muted)}
+.mock .ch div.on{background:var(--m-raised);color:var(--m-text)}
+.mock .chat{background:color-mix(in srgb,var(--m-chat) var(--o-msg),transparent);display:flex;flex-direction:column;padding:14px 16px;gap:14px;overflow:hidden}
+.mock .msg{display:flex;gap:12px}.mock .av{width:38px;height:38px;border-radius:50%;flex:none;background:var(--m-acc)}
+.mock .msg b{font-size:var(--bs)}.mock .msg em{font-style:normal;color:var(--m-muted);font-size:11px;margin-left:6px}
+.mock .msg span{display:block}
+.mock a{color:var(--m-link);text-decoration:none}
+.mock .men{background:var(--m-menbg);border-radius:4px;padding:0 3px;display:inline!important}
+.mock code{font:var(--ms)/1.4 "IBM Plex Mono",monospace;background:var(--m-base);padding:2px 6px;border-radius:4px}
+.mock h4{margin:0;font-size:var(--hs)}
+.mock .comp{margin-top:auto;background:color-mix(in srgb,var(--m-raised) var(--o-comp),transparent);border-radius:8px;padding:11px 14px;color:var(--m-muted)}
+.mock .mem{background:color-mix(in srgb,var(--m-side) var(--o-mem),transparent);padding:14px 12px;display:flex;flex-direction:column;gap:10px;font-size:13px}
+.mock .mem div{display:flex;align-items:center;gap:8px}.mock .mem i{width:26px;height:26px;border-radius:50%;background:var(--m-raised);position:relative}
+.mock .mem i::after{content:"";position:absolute;right:-1px;bottom:-1px;width:9px;height:9px;border-radius:50%;background:var(--m-pos);border:2px solid var(--m-side)}
+.how{margin:44px 0 0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;color:var(--sub);font-size:14px}
+.how li{border-top:1px solid var(--line);padding-top:12px}.how b{display:block;color:var(--ink);font-weight:500;margin-bottom:2px}
+@media(max-width:760px){.how{grid-template-columns:1fr;gap:16px}}
+footer{margin-top:48px;color:var(--sub);font:12px "IBM Plex Mono",monospace}
+</style>
 </head>
 <body>
-    <center>
-        <h1>502 Bad Gateway</h1>
-        <hr>
-        <div class="nginx">nginx</div>
-    </center>
+<main>
+<header class="top"><span>serein ⇄ discord-css</span><button id="theme">Light / Dark</button></header>
+
+<h1>Convert Serein themes to Discord CSS, and back.</h1>
+<p class="lead">Drop a <code>.serein-extension</code> or a CSS file. Colors, background images, section opacity and sizes carry over in both directions. Everything runs in your browser.</p>
+
+<div class="tool" id="drop">
+  <div class="bar">
+    <div class="tabs" role="group" aria-label="Direction">
+      <button id="d1" aria-pressed="true">Serein → CSS</button>
+      <button id="d2" aria-pressed="false">CSS → Serein</button>
+    </div>
+    <div class="acts">
+      <label class="btn" style="cursor:pointer"><input type="file" id="file" hidden>Open file…</label>
+      <button class="btn" id="sample">Load example</button>
+      <button class="btn" id="swap">Swap</button>
+    </div>
+  </div>
+  <div class="opts">
+    <label>Name <input type="text" id="oName" placeholder="from theme"></label>
+    <label>Author <input type="text" id="oAuthor" placeholder="from theme"></label>
+    <label>CSS format <select id="oFmt"><option value="native">Discord (standard variables)</option><option value="mica">Discord Mica</option></select></label>
+    <label><input type="checkbox" id="oLight" checked> Include light mode</label>
+    <label><input type="checkbox" id="oImg" checked> Embed images (base64)</label>
+  </div>
+  <div class="panes">
+    <div class="pane"><div class="ph"><span id="inT">Input · Serein JSON</span></div><textarea id="inp" spellcheck="false" aria-label="Input" placeholder="Paste text here, or drop a file anywhere on this panel."></textarea></div>
+    <div class="pane"><div class="ph"><span id="outT">Output · Discord CSS</span><span class="acts" style="padding:0"><button class="btn" id="copy">Copy</button><button class="btn main" id="dl">Download</button></span></div><textarea id="out" spellcheck="false" aria-label="Output" readonly></textarea></div>
+  </div>
+</div>
+<p id="msg" role="status"></p>
+
+<h2>Preview · dark mode</h2>
+<div class="sw" id="sw"></div>
+<div class="mock" id="mock" aria-label="Discord mockup using the theme colors">
+  <div class="top"># general <small>· preview</small></div>
+  <div class="srv"><i>D</i><i>A</i><i>M</i><i>+</i></div>
+  <div class="ch"><p>Text channels</p><div># general</div><div class="on"># music</div><div># links</div><p>Voice channels</p><div>Lounge</div></div>
+  <div class="chat">
+    <div class="msg"><div class="av"></div><div><b>Atsukoro</b><em>Today</em><span>Hey <span class="men">@everyone</span>, how does the theme look?</span></div></div>
+    <div class="msg"><div class="av" style="opacity:.6"></div><div><b>Sakura</b><em>Today</em><span>Nice colors. <a href="#">example.com/theme</a> and <code>--brand-500</code></span></div></div>
+    <h4>Heading text</h4>
+    <div class="comp">Message #music</div>
+  </div>
+  <div class="mem"><p>Online — 3</p><div><i></i>Atsukoro</div><div><i></i>Sakura</div><div><i></i>Kona</div></div>
+</div>
+
+<ol class="how">
+  <li><b>1. Load</b>Open or drop a file. The direction is detected from its contents.</li>
+  <li><b>2. Choose a format</b>Standard Discord variables or Discord Mica.</li>
+  <li><b>3. Download</b>Images and section opacity round-trip back into Serein.</li>
+</ol>
+<footer>Works with Serein themes and BetterDiscord / Vencord / Discord Mica CSS.</footer>
+</main>
+
+<script>
+
+
+let dir='s2c';
+const $=id=>document.getElementById(id);
+
+const SAMPLE_S=`{"manifest":{"api_version":1,"id":"local-theme-18e4edd598e2be57-1","name":"Green.","version":"1.0.0","author":"catboy","license":"CC0-1.0","source":"","kind":"theme","capabilities":[],"actions":[]},"theme":{"light":{"colors":{},"backdrop":null},"dark":{"colors":{"accent":"#9CE397FF","base":"#BBE0B2FF","chat":"#D2EEC9FF","muted":"#8BE86FFF","raised":"#B8F4B6FF","sidebar":"#C7EEC5FF","text":"#B2DEAFFF"},"backdrop":["#C6F1BCFF","#9EE987FF"]},"style":{"transparency_blur":false,"transparency":15,"blur":50}}}`;
+
+/* ---------- цвета ---------- */
+function parseColor(s){
+  if(!s||typeof s!=='string')return null;
+  s=s.trim().toLowerCase();
+  if(s==='transparent')return [0,0,0,0];
+  let m=s.match(/^#([0-9a-f]{3,8})$/);
+  if(m){let h=m[1];if(h.length===3||h.length===4)h=h.split('').map(c=>c+c).join('');
+    if(h.length===6)h+='ff';if(h.length!==8)return null;
+    return [0,2,4].map(i=>parseInt(h.substr(i,2),16)).concat(parseInt(h.substr(6,2),16)/255);}
+  m=s.match(/^rgba?\(([^)]+)\)$/);
+  if(m){const p=m[1].split(/[\s,\/]+/).filter(Boolean).map(parseFloat);
+    if(p.length<3||p.some(isNaN))return null;return [p[0],p[1],p[2],p.length>3?p[3]:1];}
+  return null;
+}
+const hex2=n=>Math.round(Math.max(0,Math.min(255,n))).toString(16).padStart(2,'0').toUpperCase();
+const toHex8=c=>'#'+hex2(c[0])+hex2(c[1])+hex2(c[2])+hex2(c[3]*255);
+const r2=n=>Math.round(n*1000)/1000;
+const toCss=c=>c[3]>=0.995?`rgb(${Math.round(c[0])}, ${Math.round(c[1])}, ${Math.round(c[2])})`:`rgba(${Math.round(c[0])}, ${Math.round(c[1])}, ${Math.round(c[2])}, ${r2(c[3])})`;
+const withA=(c,a)=>[c[0],c[1],c[2],a];
+const lum=c=>(0.299*c[0]+0.587*c[1]+0.114*c[2])/255;
+const shade=(c,k)=>[c[0]*k,c[1]*k,c[2]*k,c[3]];
+
+/* ---------- соответствия ---------- */
+const NATIVE={
+  chat:['background-primary','chat-background'],sidebar:['background-secondary','background-secondary-alt'],base:['background-tertiary'],
+  raised:['background-floating','channeltextarea-background'],muted:['text-muted','interactive-muted'],
+  text:['text-normal','header-primary','header-secondary','interactive-normal','interactive-hover','interactive-active'],
+  accent:['brand-500','brand-experiment'],hover:['background-modifier-hover'],link:['text-link'],
+  mention_bg:['mention-background'],mention_text:['mention-foreground'],
+  positive:['text-positive','status-positive'],warning:['text-warning','status-warning'],danger:['text-danger','status-danger']
+};
+const MICA={accent:'accent',chat:'flyout',raised:'button',muted:'button-border',sidebar:'background-accent',text:'button-font-color'};
+const SEC={top_bar:['[class*="titleBar_"]','background-secondary'],server_list:['[class*="guilds_"]','background-tertiary'],channel_list:['[class*="sidebar_"]','background-secondary'],message_list:['[class*="chatContent_"]','background-primary'],member_list:['[class*="membersWrap_"]','background-secondary'],composer:['[class*="channelTextArea_"]','channeltextarea-background']};
+const kebab=s=>s.replace(/_/g,'-'),snake=s=>s.replace(/-/g,'_');
+
+/* ---------- картинки ---------- */
+function bytesToUrl(a){
+  const u=Uint8Array.from(a);let mime='image/png';
+  if(u[0]===0xFF&&u[1]===0xD8)mime='image/jpeg';else if(u[0]===0x47&&u[1]===0x49)mime='image/gif';else if(u[0]===0x52&&u[1]===0x49&&u[8]===0x57)mime='image/webp';
+  let bin='';for(let i=0;i<u.length;i+=0x8000)bin+=String.fromCharCode.apply(null,u.subarray(i,i+0x8000));
+  return 'data:'+mime+';base64,'+btoa(bin);
+}
+function urlToBytes(url){const b=atob(url.split(',')[1]),u=new Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+const sameArr=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
+
+/* ---------- Serein → CSS ---------- */
+function serein2css(json){
+  const d=JSON.parse(json);
+  if(!d.theme)throw new Error('Not a Serein theme: missing "theme" field.');
+  const man=d.manifest||{},st=d.theme.style||{},mica=$('oFmt').value==='mica';
+  const name=$('oName').value||man.name||'Serein Theme',author=$('oAuthor').value||man.author||'unknown';
+  const alpha=st.transparency_blur?Math.max(0,Math.min(1,(100-(st.transparency??15))/100)):0;
+  const modeLines=(mode,t)=>{
+    const L=[],P={},add=(n,v)=>L.push(`  --${n}: ${v};`);
+    for(const k in ((t&&t.colors)||{}))P[k]=parseColor(t.colors[k]);
+    for(const k in P){const c=P[k];if(!c)continue;
+      if(mica){
+        if(MICA[k]){add(`${mode}-${MICA[k]}`,toCss(c));
+          if(k==='accent'){add(`${mode}-accent-hovered`,toCss(shade(c,.85)));add(`${mode}-accent-font-color`,lum(c)>.55?'black':'white')}
+          if(k==='sidebar')add(`${mode}-status-panel`,toCss(withA(c,.4)));}
+        else if(k==='base'){add(`${mode}-bg`,toCss(withA(c,alpha)));add(`serein-${mode}-color-base`,toCss(c))}
+        else add(`serein-${mode}-color-${kebab(k)}`,toCss(c));
+      }else if(NATIVE[k]){NATIVE[k].forEach(n=>add(n,toCss(c)));
+        if(k==='accent')['brand-560','brand-experiment-560'].forEach(n=>add(n,toCss(shade(c,.85))));}
+      else add(`serein-${mode}-color-${kebab(k)}`,toCss(c));}
+    ((t&&t.backdrop)||[]).forEach((b,i)=>{const c=parseColor(b);if(c)add(`serein-${mode}-backdrop-${i+1}`,toCss(c))});
+    const bg=t&&t.background;
+    if(bg){add(`serein-${mode}-bg-opacity`,bg.opacity);add(`serein-${mode}-bg-fit`,bg.fit);add(`serein-${mode}-bg-target`,bg.target);
+      for(const s in (bg.sections||{}))add(`serein-${mode}-section-${kebab(s)}`,bg.sections[s]);}
+    return L;
+  };
+  const blk=(sel,L)=>L.length?`${sel} {\n${L.join('\n')}\n}\n\n`:'';
+  const dl=modeLines('dark',d.theme.dark),ll=$('oLight').checked?modeLines('light',d.theme.light):[];
+  let css=`/**\n * @name ${name}\n * @author ${author}\n * @version ${man.version||'1.0.0'}\n * @id ${man.id||''}\n * @license ${man.license||'CC0-1.0'}\n * @source ${man.source||''}\n * @description Converted from Serein theme\n */\n\n`;
+  if(mica)css+='@import url("https://discord-mica.pages.dev/src/main.css");\n\n'+blk(':root',[...dl,...ll]);
+  else css+=blk(':root, .theme-dark',dl)+blk('.theme-light',ll);
+  const G=[],ga=(n,v)=>G.push(`  --${n}: ${v};`);
+  ga('serein-transparency',st.transparency??15);ga('serein-blur',st.blur??50);ga('serein-transparency-blur',st.transparency_blur?1:0);
+  for(const [k,n] of [['body_size','body-size'],['heading_size','heading-size'],['monospace_size','monospace-size'],['window_radius','window-radius']])if(st[k]!=null)ga('serein-'+n,st[k]+'px');
+  if(st.item_spacing)ga('serein-item-spacing',st.item_spacing.join(' '));
+  const img=$('oImg').checked&&d.background_image&&d.background_image.length;
+  if(img){ga('serein-background-image',`url(${bytesToUrl(d.background_image)})`);
+    if(d.cover_image&&d.cover_image.length&&!sameArr(d.cover_image,d.background_image))ga('serein-cover-image',`url(${bytesToUrl(d.cover_image)})`);}
+  if(mica)ga('custom-app-top-bar-height','calc(24px + var(--space-sm))');
+  css+=blk(':root',G);
+  const dbg=d.theme.dark&&d.theme.dark.background,bd=d.theme.dark&&d.theme.dark.backdrop;
+  if(img||(bd&&bd.length>=2))css+=`body {\n  background-image: ${img?'var(--serein-background-image)':'linear-gradient(135deg, var(--serein-dark-backdrop-1), var(--serein-dark-backdrop-2))'};\n  background-size: ${(dbg&&dbg.fit)||'cover'};\n  background-position: center;\n  background-repeat: no-repeat;\n}\n\n`;
+  if(!mica&&dbg&&dbg.sections){
+    css+='/* Section opacity (approximate: Discord class names change) */\n';
+    for(const s in dbg.sections)if(SEC[s])css+=`${SEC[s][0]} {\n  background: color-mix(in srgb, var(--${SEC[s][1]}) calc(var(--serein-dark-section-${kebab(s)}) * 1%), transparent) !important;\n}\n`;
+    css+='\n';
+  }
+  if(st.window_radius!=null)css+='#app-mount {\n  border-radius: var(--serein-window-radius);\n  overflow: hidden;\n}\n';
+  return css;
+}
+
+/* ---------- CSS → Serein ---------- */
+function css2serein(css){
+  const img={};
+  css=css.replace(/--serein-(background|cover)-image\s*:\s*url\(\s*["']?(data:[^"')]+)["']?\s*\)\s*;?/g,(m,k,u)=>{img[k]=urlToBytes(u);return ''});
+  const dark={},light={},all={};
+  for(const b of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)){
+    const T=/theme-light/.test(b[1])?light:dark;
+    for(const m of b[2].matchAll(/--([a-z0-9-]+)\s*:\s*([^;]+);/gi)){const v=m[2].trim();T[m[1]]=v;all[m[1]]=v}
+  }
+  const keys=Object.keys(all);
+  const isMica=keys.some(k=>/^(dark|light)-/.test(k));
+  if(!isMica&&!keys.some(k=>/^(background-|brand-|text-normal|serein-)/.test(k)))throw new Error('No Discord variables found (--background-primary, --brand-500, ... or Mica --dark-*/--light-*).');
+  const meta=k=>{const m=css.match(new RegExp('@'+k+'[ \\t]+(.*)'));return m?m[1].trim():''};
+  const name=$('oName').value||meta('name')||'Converted theme',author=$('oAuthor').value||meta('author')||'unknown';
+  const num=k=>{const v=parseFloat(all[k]);return isNaN(v)?undefined:v};
+  const build=mode=>{
+    const V=mode==='dark'?dark:light,colors={},o={};
+    if(isMica){
+      for(const sk in MICA){const c=parseColor(all[`${mode}-${MICA[sk]}`]);if(c)colors[sk]=toHex8(c)}
+      let base=parseColor(all[`${mode}-bg`]);if(base&&base[3]<.01)base=null;
+      if(!base)base=parseColor(all[`${mode}-flyout`])||parseColor(all[`${mode}-background-accent`]);
+      if(base&&Object.keys(colors).length)colors.base=toHex8(withA(base,1));
+    }else for(const k in NATIVE)for(const n of NATIVE[k]){const c=parseColor(V[n]);if(c){colors[k]=toHex8(c);break}}
+    const pre=`serein-${mode}-color-`;
+    for(const k of keys)if(k.startsWith(pre)){const c=parseColor(all[k]);if(c)colors[snake(k.slice(pre.length))]=toHex8(c)}
+    const op=all[`serein-${mode}-bg-opacity`];
+    if(op!==undefined){const sec={},sp=`serein-${mode}-section-`;
+      for(const k of keys)if(k.startsWith(sp))sec[snake(k.slice(sp.length))]=parseFloat(all[k]);
+      o.background={opacity:parseFloat(op),fit:all[`serein-${mode}-bg-fit`]||'cover',target:all[`serein-${mode}-bg-target`]||'window',sections:sec};}
+    o.colors=colors;
+    const b1=parseColor(all[`serein-${mode}-backdrop-1`]),b2=parseColor(all[`serein-${mode}-backdrop-2`]);
+    o.backdrop=b1&&b2?[toHex8(b1),toHex8(b2)]:null;
+    return o;
+  };
+  const bgA=(parseColor(all['dark-bg'])||[0,0,0,0])[3],tb=all['serein-transparency-blur'];
+  const style={transparency_blur:tb!==undefined?tb==='1':bgA>.01&&bgA<.99,transparency:num('serein-transparency')??15,blur:num('serein-blur')??50};
+  for(const [k,n] of [['body_size','body-size'],['heading_size','heading-size'],['monospace_size','monospace-size']]){const v=num('serein-'+n);if(v!==undefined)style[k]=v}
+  if(all['serein-item-spacing'])style.item_spacing=all['serein-item-spacing'].split(/\s+/).map(Number);
+  const wr=num('serein-window-radius');if(wr!==undefined)style.window_radius=wr;
+  const slug=name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'theme';
+  const out={};
+  const bi=img.background||img.cover,ci=img.cover||img.background;
+  if(bi){out.background_image=bi;out.cover_image=ci}
+  out.manifest={api_version:1,id:meta('id')||`local-theme-${slug}`,name,version:meta('version')||'1.0.0',author,license:meta('license')||'CC0-1.0',source:meta('source'),kind:'theme',capabilities:[],actions:[]};
+  out.theme={light:$('oLight').checked?build('light'):{colors:{},backdrop:null},dark:build('dark'),style};
+  return JSON.stringify(out);
+}
+
+/* ---------- UI ---------- */
+function setDir(d){
+  dir=d;
+  $('d1').setAttribute('aria-pressed',d==='s2c');$('d2').setAttribute('aria-pressed',d==='c2s');
+  $('inT').textContent=d==='s2c'?'Input · Serein JSON':'Input · Discord CSS';
+  $('outT').textContent=d==='s2c'?'Output · Discord CSS':'Output · Serein JSON';
+  run();
+}
+function msg(t,err){const m=$('msg');m.textContent=t;m.className=err?'err':''}
+function showSwatches(){
+  const sw=$('sw');sw.innerHTML='';
+  const src=dir==='s2c'?$('inp').value:$('out').value;
+  let d;try{d=JSON.parse(src)}catch(e){return}
+  const cols=(d.theme&&d.theme.dark&&d.theme.dark.colors)||{};
+  const items=Object.entries(cols);
+  (d.theme&&d.theme.dark&&d.theme.dark.backdrop||[]).forEach((c,i)=>items.push(['backdrop '+(i+1),c]));
+  for(const [k,v] of items){const c=parseColor(v);if(!c)continue;
+    const el=document.createElement('div');const i=document.createElement('i');const b=document.createElement('b');
+    b.style.background=toCss(c);i.appendChild(b);el.appendChild(i);el.appendChild(document.createTextNode(k+' '+v));sw.appendChild(el);}
+}
+function run(){
+  const v=$('inp').value.trim();
+  if(!v){$('out').value='';msg('');$('sw').innerHTML='';return}
+  try{
+    $('out').value=dir==='s2c'?serein2css(v):css2serein(v);
+    msg('Converted.');
+  }catch(e){$('out').value='';msg('Error: '+(e.message||e),true)}
+  showSwatches();preview();
+}
+function load(text,filename){
+  const t=text.trim();
+  const isJson=t.startsWith('{');
+  if(isJson!==(dir==='s2c'))setDir(isJson?'s2c':'c2s');
+  $('inp').value=text;run();
+  if(filename)$('dl').dataset.src=filename;
+}
+
+let imgKey=-1,imgUrl='';
+function preview(){
+  const m=$('mock');let d;
+  try{d=JSON.parse(dir==='s2c'?$('inp').value:$('out').value)}catch(e){return}
+  const t=d.theme&&d.theme.dark;if(!t)return;
+  const c=t.colors||{},sec=(t.background&&t.background.sections)||{},st=d.theme.style||{};
+  const g=(k,f)=>{const x=parseColor(c[k]);return x?toCss(x):f};
+  const set=(n,v)=>m.style.setProperty(n,v);
+  set('--m-chat',g('chat','#313338'));set('--m-side',g('sidebar','#2b2d31'));set('--m-base',g('base','#1e1f22'));
+  set('--m-raised',g('raised','#383a40'));set('--m-text',g('text','#f2f3f5'));set('--m-muted',g('muted','#949ba4'));
+  set('--m-acc',g('accent','#5865f2'));set('--m-link',g('link',g('accent','#00a8fc')));
+  set('--m-menbg',g('mention_bg','rgba(88,101,242,.3)'));set('--m-pos',g('positive',g('accent','#23a55a')));
+  [['top','top_bar'],['srv','server_list'],['ch','channel_list'],['msg','message_list'],['mem','member_list'],['comp','composer']].forEach(([a,b])=>set('--o-'+a,(sec[b]??100)+'%'));
+  if(st.window_radius!=null)set('--rad',st.window_radius+'px');
+  if(st.body_size)set('--bs',st.body_size+'px');if(st.heading_size)set('--hs',st.heading_size+'px');if(st.monospace_size)set('--ms',(st.monospace_size+2)+'px');
+  const bi=d.background_image;
+  if(bi&&bi.length){if(imgKey!==bi.length){imgKey=bi.length;try{imgUrl=bytesToUrl(bi)}catch(e){imgUrl=''}}m.style.backgroundImage=imgUrl?`url(${imgUrl})`:'';}
+  else{imgKey=-1;const b=t.backdrop;const b1=b&&parseColor(b[0]),b2=b&&parseColor(b[1]);m.style.backgroundImage=b1&&b2?`linear-gradient(135deg,${toCss(b1)},${toCss(b2)})`:'';}
+  const bg=t.background&&t.background.fit;m.style.backgroundSize=bg||'cover';
+}
+$('theme').onclick=()=>{const r=document.documentElement;r.dataset.theme=r.dataset.theme==='light'?'dark':'light'};
+$('inp').addEventListener('input',run);
+['oName','oAuthor','oLight','oFmt','oImg'].forEach(id=>$(id).addEventListener('input',run));
+$('d1').onclick=()=>setDir('s2c');$('d2').onclick=()=>setDir('c2s');
+$('sample').onclick=()=>{dir='s2c';$('inp').value=SAMPLE_S;setDir('s2c')};
+$('swap').onclick=()=>{const o=$('out').value;if(!o)return;setDir(dir==='s2c'?'c2s':'s2c');$('inp').value=o;run()};
+$('file').onchange=e=>{const f=e.target.files[0];if(!f)return;f.text().then(t=>load(t,f.name))};
+const drop=$('drop');
+['dragenter','dragover'].forEach(n=>drop.addEventListener(n,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(n=>drop.addEventListener(n,e=>{e.preventDefault();drop.classList.remove('over')}));
+drop.addEventListener('drop',e=>{const f=e.dataTransfer.files[0];if(f)f.text().then(t=>load(t,f.name))});
+$('copy').onclick=async()=>{
+  const o=$('out');o.select();
+  try{await navigator.clipboard.writeText(o.value);msg('Copied.')}catch(e){document.execCommand('copy');msg('Copied.')}
+};
+$('dl').onclick=()=>{
+  const o=$('out').value;if(!o){msg('Nothing to download.',true);return}
+  const css=dir==='s2c';
+  let name='theme';
+  try{name=css?(($('oName').value||JSON.parse($('inp').value).manifest.name||'theme')):(JSON.parse(o).manifest.id)}catch(e){}
+  name=String(name).replace(/[^\w.-]+/g,'-').replace(/^-+|-+$/g,'')||'theme';
+  const fn=css?name+'.theme.css':name+'.serein-extension';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([o],{type:css?'text/css':'application/json'}));
+  a.download=fn;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+};
+run();
+</script>
 </body>
 </html>
