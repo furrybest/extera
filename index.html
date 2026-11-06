@@ -170,15 +170,29 @@ dialog#log{border-left-style:dashed}
 .batch .br:last-child{border-bottom:0}.batch .br span:first-child{color:var(--ink)}.batch .bad{color:var(--err)}
 .batch[hidden]{display:none}
 .sw .none{grid-column:1/-1;background:var(--surf);padding:10px 14px;font:12px "IBM Plex Mono",monospace;color:var(--sub)}
+
+.urlrow{display:flex;gap:8px;padding:10px 12px;border-bottom:1px dashed var(--line)}
+.urlrow input{flex:1;min-width:0;background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:4px;padding:7px 10px;font:12.5px "IBM Plex Mono",monospace}
+.stylep{margin:0 0 14px;border:1px solid var(--line);background:var(--surf)}
+.stylep .sh{padding:8px 14px;border-bottom:1px dashed var(--line);font:500 12px "IBM Plex Mono",monospace;color:var(--acc)}
+.sg{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:0}
+.sg label{display:grid;grid-template-columns:110px 1fr 34px;align-items:center;gap:10px;padding:10px 14px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);font-size:13px;color:var(--sub)}
+.sg label.ck{display:flex;gap:8px}
+.sg input[type=range]{width:100%;accent-color:var(--acc)}
+.sg output{font:12px "IBM Plex Mono",monospace;color:var(--ink);text-align:right}
+.stylep[hidden]{display:none}
+.opts select{max-width:300px}
+.lnk{background:none;border:0;color:inherit;font:inherit;text-decoration:underline;cursor:pointer;padding:0}
+.mock .top,.mock .srv,.mock .ch,.mock .chat,.mock .mem,.mock .comp{backdrop-filter:blur(var(--blur,0px))}
 </style>
 </head>
 <body>
 <main>
-<header class="top"><span class="lg"><b>⇄</b>serein-discord</span><div class="hr"><button id="logBtn" aria-haspopup="dialog">Changelog</button><button id="theme">Light / Dark</button></div></header>
+<header class="top"><span class="lg"><b>⇄</b>serein-discord</span><div class="hr"><button id="logBtn" aria-haspopup="dialog" data-i18n="logBtn">Changelog</button><button id="langBtn" aria-label="Language" title="EN / RU / UK">EN</button><button id="theme" data-i18n="theme">Light / Dark</button></div></header>
 
 <div class="tag"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>Serein ⇄ Discord CSS</div>
-<h1>Convert Serein themes to Discord CSS, and back.</h1>
-<p class="lead">Drop a <code>.serein-extension</code> or a CSS file. Colors, background images, section opacity and sizes carry over in both directions. Everything runs in your browser.</p>
+<h1 data-i18n="h1">Convert Serein themes to Discord CSS, and back.</h1>
+<p class="lead" data-i18n-html="lead">Drop a <code>.serein-extension</code> or a CSS file. Colors, background images, section opacity and sizes carry over in both directions. Everything runs in your browser.</p>
 
 <div class="tool fr" id="drop">
   <div class="bar">
@@ -187,28 +201,30 @@ dialog#log{border-left-style:dashed}
       <button id="d2" aria-pressed="false">CSS → Serein</button>
     </div>
     <div class="acts">
-      <label class="btn" style="cursor:pointer"><input type="file" id="file" multiple hidden>Open file(s)…</label>
-      <button class="btn" id="sample">Load example</button>
-      <button class="btn" id="swap">Swap</button>
+      <label class="btn" style="cursor:pointer"><input type="file" id="file" multiple hidden><span data-i18n="open">Open file(s)…</span></label>
+      <button class="btn" id="sample" data-i18n="sample">Load example</button>
+      <button class="btn" id="swap" data-i18n="swap">Swap</button>
     </div>
   </div>
+  <div class="urlrow"><input type="url" id="urlIn" data-i18n-ph="urlPh" placeholder="Paste a raw link to a theme (GitHub, jsDelivr…)" autocomplete="off" spellcheck="false"><button class="btn" id="urlGo" data-i18n="urlGo">Import</button></div>
   <div class="opts">
-    <label>Name <input type="text" id="oName" placeholder="from theme"></label>
-    <label>CSS format <select id="oFmt"><option value="native">Discord (standard variables)</option><option value="mica">Discord Mica</option></select></label>
-    <label><input type="checkbox" id="oLight" checked> Include light mode</label>
-    <label><input type="checkbox" id="oImg" checked> Embed images (base64)</label>
-    <span class="imgc"><label class="btn" style="cursor:pointer"><input type="file" id="imgFile" accept="image/*" hidden>Background image…</label><span id="imgName"></span><button class="btn" id="imgClear" hidden>Remove</button></span>
+    <label><span data-i18n="name">Name</span> <input type="text" id="oName" data-i18n-ph="namePh" placeholder="from theme"></label>
+    <label><span data-i18n="fmt">CSS format</span> <select id="oFmt"><option value="native" data-i18n="fmtN">Discord (standard variables)</option><option value="mica" data-i18n="fmtM">Discord Mica</option></select></label>
+    <label><input type="checkbox" id="oLight" checked> <span data-i18n="light">Include light mode</span></label>
+    <label><input type="checkbox" id="oImg" checked> <span data-i18n="img">Embed images (base64)</span></label>
+    <span class="imgc"><label class="btn" style="cursor:pointer"><input type="file" id="imgFile" accept="image/*" hidden><span data-i18n="bgImg">Background image…</span></label><span id="imgName"></span><button class="btn" id="imgClear" hidden data-i18n="remove">Remove</button></span>
   </div>
   <div class="panes">
-    <div class="pane"><div class="ph"><span id="inT">Input · Serein JSON</span></div><textarea id="inp" spellcheck="false" aria-label="Input" placeholder="Paste text here, or drop a file anywhere on this panel."></textarea></div>
-    <div class="pane"><div class="ph"><span id="outT">Output · Discord CSS</span><span class="acts" style="padding:0"><button class="btn" id="copy">Copy</button><button class="btn main" id="dl">Download</button></span></div><textarea id="out" spellcheck="false" aria-label="Output" readonly></textarea></div>
+    <div class="pane"><div class="ph"><span id="inT">Input · Serein JSON</span></div><textarea id="inp" spellcheck="false" aria-label="Input" data-i18n-ph="inpPh" placeholder="Paste text here, or drop a file anywhere on this panel."></textarea></div>
+    <div class="pane"><div class="ph"><span id="outT">Output · Discord CSS</span><span class="acts" style="padding:0"><button class="btn" id="copy" data-i18n="copy">Copy</button><button class="btn main" id="dl" data-i18n="dl">Download</button></span></div><textarea id="out" spellcheck="false" aria-label="Output" readonly></textarea></div>
   </div>
 </div>
 <p id="msg" role="status"></p>
 <div id="batch" class="batch" hidden></div>
 
-<div class="ph2"><h2 id="pvT">Preview</h2><div class="seg2" role="group" aria-label="Preview mode"><button id="pvD" aria-pressed="true">Dark</button><button id="pvL" aria-pressed="false">Light</button></div><span class="hint">Click a color to edit it.</span></div>
+<div class="ph2"><h2 id="pvT" data-i18n="preview">Preview</h2><div class="seg2" role="group" aria-label="Preview mode"><button id="pvD" aria-pressed="true" data-i18n="mDark">Dark</button><button id="pvL" aria-pressed="false" data-i18n="mLight">Light</button></div><span class="hint" data-i18n="hint">Click a color to edit it.</span></div>
 <div class="sw" id="sw"></div>
+<div class="stylep" id="stylep" hidden><div class="sh" data-i18n="styleT">Style</div><div class="sg" id="sg"></div></div>
 <div class="fr"><div class="mock" id="mock" aria-label="Discord mockup using the theme colors">
   <div class="top"># general <small>· preview</small></div>
   <div class="srv"><i>D</i><i>A</i><i>M</i><i>+</i></div>
@@ -223,17 +239,26 @@ dialog#log{border-left-style:dashed}
 </div></div>
 
 <ol class="how">
-  <li><span class="art"><i>01</i></span><div class="tx"><b>Load</b>Open or drop a file. The direction is detected from its contents.</div></li>
-  <li><span class="art"><i>02</i></span><div class="tx"><b>Choose a format</b>Standard Discord variables or Discord Mica.</div></li>
-  <li><span class="art"><i>03</i></span><div class="tx"><b>Download</b>Images and section opacity round-trip back into Serein.</div></li>
+  <li><span class="art"><i>01</i></span><div class="tx" data-i18n-html="how1"></div></li>
+  <li><span class="art"><i>02</i></span><div class="tx" data-i18n-html="how2"></div></li>
+  <li><span class="art"><i>03</i></span><div class="tx" data-i18n-html="how3"></div></li>
 </ol>
-<footer>Works with Serein themes and BetterDiscord / Vencord / Discord Mica CSS.</footer>
+<footer><span data-i18n="foot">Works with Serein themes and BetterDiscord / Vencord / Discord Mica CSS.</span> · <button class="lnk" id="resetSess" data-i18n="reset">Clear saved session</button></footer>
 </main>
 
 <dialog id="log" aria-labelledby="logT">
   <div class="lh"><span id="logT">Changelog</span><button id="logX">Close</button></div>
   <div class="lb">
-    <section><h3>v1.8 <span>latest</span></h3><ul>
+    <section><h3>v1.10 <span>latest</span></h3><ul>
+      <li><b>Language follows your browser.</b> English, Russian or Ukrainian is chosen automatically; English is the fallback.</li>
+      <li>The language button cycles EN → RU → UK, and only a manual choice is remembered.</li>
+      <li>Ukrainian interface added.</li></ul></section>
+    <section><h3>v1.9</h3><ul>
+      <li><b>Style sliders.</b> Transparency, blur, window radius and text sizes with a live preview.</li>
+      <li><b>Import by link.</b> Paste a raw GitHub / jsDelivr link (also <code>?import=URL</code>); <code>@import</code> files are followed.</li>
+      <li><b>Saved session.</b> Your last input and options are restored after a reload.</li>
+      <li><b>Russian / English.</b> Switch the interface language in the header.</li></ul></section>
+    <section><h3>v1.8</h3><ul>
       <li><b>Proper favicon set.</b> SVG, ICO, PNG and an Apple touch icon instead of an inline placeholder.</li></ul></section>
     <section><h3>v1.7</h3><ul>
       <li><b>Background image upload.</b> Add your own wallpaper; it is embedded into the Serein file or the CSS.</li>
@@ -276,6 +301,77 @@ dialog#log{border-left-style:dashed}
 
 let dir='s2c';
 const $=id=>document.getElementById(id);
+/* ---------- i18n ---------- */
+const LANGS=['en','ru','uk'];let langManual=false;
+function detectLang(){const ls=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||'en'];
+  for(const l of ls){const p=String(l).toLowerCase().split('-')[0];if(p==='ru'||p==='be')return 'ru';if(p==='uk')return 'uk';if(p==='en')return 'en'}return 'en'}
+let lang=detectLang();
+const I={
+en:{logBtn:'Changelog',theme:'Light / Dark',h1:'Convert Serein themes to Discord CSS, and back.',
+ lead:'Drop a <code>.serein-extension</code> or a CSS file. Colors, background images, section opacity and sizes carry over in both directions. Everything runs in your browser.',
+ open:'Open file(s)…',sample:'Load example',swap:'Swap',urlPh:'Paste a raw link to a theme (GitHub, jsDelivr…)',urlGo:'Import',
+ name:'Name',namePh:'from theme',fmt:'CSS format',fmtN:'Discord (standard variables)',fmtM:'Discord Mica',light:'Include light mode',img:'Embed images (base64)',bgImg:'Background image…',remove:'Remove',
+ inS:'Input · Serein JSON',inC:'Input · Discord CSS',outC:'Output · Discord CSS',outS:'Output · Serein JSON',copy:'Copy',dl:'Download',
+ inpPh:'Paste text here, or drop a file anywhere on this panel.',preview:'Preview',mDark:'Dark',mLight:'Light',hint:'Click a color to edit it.',
+ styleT:'Style',sTr:'Transparency',sBl:'Blur',sRad:'Window radius',sBody:'Text size',sHead:'Heading size',sMono:'Code size',sTB:'Use transparency + blur',
+ how1:'<b>Load</b>Open or drop a file. The direction is detected from its contents.',how2:'<b>Choose a format</b>Standard Discord variables or Discord Mica.',how3:'<b>Download</b>Images and section opacity round-trip back into Serein.',
+ foot:'Works with Serein themes and BetterDiscord / Vencord / Discord Mica CSS.',reset:'Clear saved session',
+ converted:'Converted.',error:'Error: ',copied:'Copied.',nothing:'Nothing to download.',colorUpd:'Updated in the output.',notImage:'That is not an image file.',
+ errTheme:'Not a Serein theme: missing "theme" field.',
+ errUnrec:(n,f)=>`None of the ${n} CSS variables are recognized (found: ${f}). Expected --background-primary, --brand-500, --text-normal or Mica --dark-*/--light-*.`,
+ errNoVars:'No CSS variables found. This file has no "--name: value;" declarations (it may only @import another stylesheet), so there are no colors to convert.',
+ ruleNote:'This CSS has no variables, so the palette was guessed from its rules (approximate).',bgOk:'Background image downloaded and embedded.',
+ bgFail:'The background image could not be downloaded (the host blocks it); add it with “Background image…”.',
+ noColors:'No colors defined for this mode in the theme; the preview uses Discord defaults.',clickEdit:'Click to edit',
+ batchHead:(n,b)=>`Batch · ${n} converted${b?`, ${b} failed`:''}`,dlzip:'Download ZIP',guessed:' · palette guessed',noWall:' · no wallpaper',
+ urlBad:'Enter a full link starting with https://',urlLoading:'Downloading…',urlFail:r=>`Could not download the file (${r}). Use a raw link (on GitHub: open the file → Raw), the site may also block cross-origin requests.`,cleared:'Saved session cleared.'},
+ru:{logBtn:'История изменений',theme:'Светлая / Тёмная',h1:'Конвертер тем Serein в Discord CSS и обратно.',
+ lead:'Перетащи файл <code>.serein-extension</code> или CSS. Цвета, фоновые картинки, прозрачность секций и размеры переносятся в обе стороны. Всё считается в твоём браузере.',
+ open:'Открыть файл(ы)…',sample:'Пример',swap:'Поменять местами',urlPh:'Вставь прямую ссылку на тему (GitHub, jsDelivr…)',urlGo:'Импорт',
+ name:'Название',namePh:'из темы',fmt:'Формат CSS',fmtN:'Discord (стандартные переменные)',fmtM:'Discord Mica',light:'Светлая тема',img:'Встраивать картинки (base64)',bgImg:'Фоновая картинка…',remove:'Убрать',
+ inS:'Вход · Serein JSON',inC:'Вход · Discord CSS',outC:'Результат · Discord CSS',outS:'Результат · Serein JSON',copy:'Копировать',dl:'Скачать',
+ inpPh:'Вставь текст сюда или перетащи файл на эту панель.',preview:'Предпросмотр',mDark:'Тёмная',mLight:'Светлая',hint:'Нажми на цвет, чтобы изменить.',
+ styleT:'Стиль',sTr:'Прозрачность',sBl:'Размытие',sRad:'Радиус окна',sBody:'Размер текста',sHead:'Размер заголовков',sMono:'Размер кода',sTB:'Прозрачность и размытие',
+ how1:'<b>Загрузи</b>Открой или перетащи файл. Направление определится по содержимому.',how2:'<b>Выбери формат</b>Стандартные переменные Discord или Discord Mica.',how3:'<b>Скачай</b>Картинки и прозрачность секций возвращаются обратно в Serein.',
+ foot:'Работает с темами Serein и CSS для BetterDiscord / Vencord / Discord Mica.',reset:'Очистить сохранённое',
+ converted:'Готово.',error:'Ошибка: ',copied:'Скопировано.',nothing:'Нечего скачивать.',colorUpd:'Обновлено в результате.',notImage:'Это не картинка.',
+ errTheme:'Это не тема Serein: нет поля "theme".',
+ errUnrec:(n,f)=>`Ни одна из ${n} CSS-переменных не распознана (найдены: ${f}). Нужны --background-primary, --brand-500, --text-normal или Mica --dark-*/--light-*.`,
+ errNoVars:'CSS-переменных не найдено. В файле нет объявлений вида "--имя: значение;" (возможно, он только подключает другой файл через @import), поэтому цветов для конвертации нет.',
+ ruleNote:'В этом CSS нет переменных, поэтому палитра подобрана по правилам (приблизительно).',bgOk:'Фоновая картинка скачана и встроена.',
+ bgFail:'Фоновую картинку не удалось скачать (сайт блокирует), добавь её кнопкой «Фоновая картинка…».',
+ noColors:'В теме нет цветов для этого режима, в предпросмотре стандартные цвета Discord.',clickEdit:'Нажми, чтобы изменить',
+ batchHead:(n,b)=>`Пакет · готово ${n}${b?`, ошибок ${b}`:''}`,dlzip:'Скачать ZIP',guessed:' · палитра подобрана',noWall:' · без обоев',
+ urlBad:'Введи полную ссылку, начинающуюся с https://',urlLoading:'Скачиваю…',urlFail:r=>`Не удалось скачать файл (${r}). Нужна прямая ссылка (на GitHub: открой файл → Raw), также сайт может блокировать запросы с других доменов.`,cleared:'Сохранённая сессия очищена.'},
+uk:{logBtn:'Історія змін',theme:'Світла / Темна',h1:'Конвертер тем Serein у Discord CSS і навпаки.',
+ lead:'Перетягни файл <code>.serein-extension</code> або CSS. Кольори, фонові картинки, прозорість секцій і розміри переносяться в обидва боки. Усе рахується у твоєму браузері.',
+ open:'Відкрити файл(и)…',sample:'Приклад',swap:'Поміняти місцями',urlPh:'Встав пряме посилання на тему (GitHub, jsDelivr…)',urlGo:'Імпорт',
+ name:'Назва',namePh:'з теми',fmt:'Формат CSS',fmtN:'Discord (стандартні змінні)',fmtM:'Discord Mica',light:'Світла тема',img:'Вбудовувати картинки (base64)',bgImg:'Фонова картинка…',remove:'Прибрати',
+ inS:'Вхід · Serein JSON',inC:'Вхід · Discord CSS',outC:'Результат · Discord CSS',outS:'Результат · Serein JSON',copy:'Копіювати',dl:'Завантажити',
+ inpPh:'Встав текст сюди або перетягни файл на цю панель.',preview:'Попередній перегляд',mDark:'Темна',mLight:'Світла',hint:'Натисни на колір, щоб змінити.',
+ styleT:'Стиль',sTr:'Прозорість',sBl:'Розмиття',sRad:'Радіус вікна',sBody:'Розмір тексту',sHead:'Розмір заголовків',sMono:'Розмір коду',sTB:'Прозорість і розмиття',
+ how1:'<b>Завантаж</b>Відкрий або перетягни файл. Напрямок визначиться за вмістом.',how2:'<b>Обери формат</b>Стандартні змінні Discord або Discord Mica.',how3:'<b>Збережи результат</b>Картинки й прозорість секцій повертаються назад у Serein.',
+ foot:'Працює з темами Serein і CSS для BetterDiscord / Vencord / Discord Mica.',reset:'Очистити збережене',
+ converted:'Готово.',error:'Помилка: ',copied:'Скопійовано.',nothing:'Нічого завантажувати.',colorUpd:'Оновлено в результаті.',notImage:'Це не картинка.',
+ errTheme:'Це не тема Serein: немає поля "theme".',
+ errUnrec:(n,f)=>`Жодну з ${n} CSS-змінних не розпізнано (знайдено: ${f}). Потрібні --background-primary, --brand-500, --text-normal або Mica --dark-*/--light-*.`,
+ errNoVars:'CSS-змінних не знайдено. У файлі немає оголошень виду "--назва: значення;" (можливо, він лише підключає інший файл через @import), тому кольорів для конвертації немає.',
+ ruleNote:'У цьому CSS немає змінних, тому палітру підібрано за правилами (приблизно).',bgOk:'Фонову картинку завантажено й вбудовано.',
+ bgFail:'Фонову картинку не вдалося завантажити (сайт блокує), додай її кнопкою «Фонова картинка…».',
+ noColors:'У темі немає кольорів для цього режиму, у перегляді стандартні кольори Discord.',clickEdit:'Натисни, щоб змінити',
+ batchHead:(n,b)=>`Пакет · готово ${n}${b?`, помилок ${b}`:''}`,dlzip:'Завантажити ZIP',guessed:' · палітру підібрано',noWall:' · без шпалер',
+ urlBad:'Введи повне посилання, що починається з https://',urlLoading:'Завантажую…',urlFail:r=>`Не вдалося завантажити файл (${r}). Потрібне пряме посилання (на GitHub: відкрий файл → Raw), також сайт може блокувати запити з інших доменів.`,cleared:'Збережену сесію очищено.'}
+};
+const tt=(k,...a)=>{let s=(I[lang]&&I[lang][k]!==undefined)?I[lang][k]:(I.en[k]!==undefined?I.en[k]:k);return typeof s==='function'?s(...a):s};
+function titles(){$('inT').textContent=dir==='s2c'?tt('inS'):tt('inC');$('outT').textContent=dir==='s2c'?tt('outC'):tt('outS')}
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll('[data-i18n]').forEach(e=>e.textContent=tt(e.dataset.i18n));
+  document.querySelectorAll('[data-i18n-html]').forEach(e=>e.innerHTML=tt(e.dataset.i18nHtml));
+  document.querySelectorAll('[data-i18n-ph]').forEach(e=>e.placeholder=tt(e.dataset.i18nPh));
+  $('langBtn').textContent=lang.toUpperCase();titles();
+}
+
 
 const SAMPLE_S=`{"manifest":{"api_version":1,"id":"local-theme-18e4edd598e2be57-1","name":"Green.","version":"1.0.0","author":"catboy","license":"CC0-1.0","source":"","kind":"theme","capabilities":[],"actions":[]},"theme":{"light":{"colors":{},"backdrop":null},"dark":{"colors":{"accent":"#9CE397FF","base":"#BBE0B2FF","chat":"#D2EEC9FF","muted":"#8BE86FFF","raised":"#B8F4B6FF","sidebar":"#C7EEC5FF","text":"#B2DEAFFF"},"backdrop":["#C6F1BCFF","#9EE987FF"]},"style":{"transparency_blur":false,"transparency":15,"blur":50}}}`;
 
@@ -331,7 +427,7 @@ const sameArr=(a,b)=>a.length===b.length&&a.every((v,i)=>v===b[i]);
 function serein2css(json){
   const d=JSON.parse(json);
   if(userImg){d.background_image=userImg;d.cover_image=userImg}
-  if(!d.theme)throw new Error('Not a Serein theme: missing "theme" field.');
+  if(!d.theme)throw new Error(tt('errTheme'));
   const man=d.manifest||{},st=d.theme.style||{},mica=$('oFmt').value==='mica';
   const name=$('oName').value||man.name||'Serein Theme',author=CREDIT;
   const alpha=st.transparency_blur?Math.max(0,Math.min(1,(100-(st.transparency??15))/100)):0;
@@ -436,7 +532,7 @@ function ruleTheme(css){
   const modeOf=a=>{if(!a.length)return;const k={};a.forEach(x=>k[x]=(k[x]||0)+1);return +Object.keys(k).sort((x,y)=>k[y]-k[x])[0]};
   const rr=modeOf(rads),ff=modeOf(fonts);if(ff)out.theme.style.body_size=ff;if(rr)out.theme.style.window_radius=rr;
   pendingSec=secVals;pendingBg=url||null;pendingFit=size;
-  ruleNote='This CSS has no variables, so the palette was guessed from its rules (approximate).';
+  ruleNote=tt('ruleNote');
   return JSON.stringify(out);
 }
 async function fetchBg(url,seq){
@@ -448,8 +544,8 @@ async function fetchBg(url,seq){
     if(seq!==runSeq)return;
     const d=JSON.parse($('out').value);d.theme.dark.background=bgBlock(d);
     $('out').value=JSON.stringify(Object.assign({background_image:u,cover_image:u},d));
-    msg(ruleNote+' Background image downloaded and embedded.');preview();
-  }catch(e){if(seq===runSeq)msg(ruleNote+' The background image could not be downloaded (the host blocks it); add it in Serein manually.')}
+    msg(ruleNote+' '+tt('bgOk'));preview();
+  }catch(e){if(seq===runSeq)msg(ruleNote+' '+tt('bgFail'))}
 }
 
 /* ---------- CSS → Serein ---------- */
@@ -466,7 +562,7 @@ function css2serein(css){
   if(!isMica&&!keys.some(k=>/^(background-|brand-|text-normal|text-default|serein-)/.test(k))){
     if(/(?:^|[\s;{])(?:background(?:-color)?|color)\s*:/.test(css))return ruleTheme(css);
     const found=keys.slice(0,6).map(k=>'--'+k).join(', ');
-    throw new Error(keys.length?`None of the ${keys.length} CSS variables are recognized (found: ${found}). Expected --background-primary, --brand-500, --text-normal or Mica --dark-*/--light-*.`:'No CSS variables found. This file has no "--name: value;" declarations (it may only @import another stylesheet), so there are no colors to convert.');
+    throw new Error(keys.length?tt('errUnrec',keys.length,found):tt('errNoVars'));
   }
   const meta=k=>{const m=css.match(new RegExp('@'+k+'[ \\t]+(.*)'));return m?m[1].trim():''};
   const name=$('oName').value||meta('name')||'Converted theme',author=CREDIT;
@@ -508,8 +604,7 @@ function css2serein(css){
 function setDir(d){
   dir=d;
   $('d1').setAttribute('aria-pressed',d==='s2c');$('d2').setAttribute('aria-pressed',d==='c2s');
-  $('inT').textContent=d==='s2c'?'Input · Serein JSON':'Input · Discord CSS';
-  $('outT').textContent=d==='s2c'?'Output · Discord CSS':'Output · Serein JSON';
+  titles();
   run();
 }
 function msg(t,err){const m=$('msg');m.textContent=t;m.className=err?'err':''}
@@ -522,6 +617,7 @@ function bgBlock(d){const sv=Math.max(0,Math.min(100,100-((d.theme.style&&d.them
 function injectImg(str){const d=JSON.parse(str);delete d.background_image;delete d.cover_image;d.theme.dark.background=bgBlock(d);
   return JSON.stringify(Object.assign({background_image:userImg,cover_image:userImg},d))}
 function showSwatches(){
+  showStyle();
   const sw=$('sw');sw.innerHTML='';
   const ta=dir==='s2c'?$('inp'):$('out');let d;try{d=JSON.parse(ta.value)}catch(e){return}
   const t=d.theme&&d.theme[pvMode];if(!t)return;
@@ -529,21 +625,21 @@ function showSwatches(){
   (t.backdrop||[]).forEach((c,i)=>items.push(['backdrop '+(i+1),c]));
   for(const [k,v] of items){const c=parseColor(v);if(!c)continue;
     const el=document.createElement('label'),i=document.createElement('i'),b=document.createElement('b'),inp=document.createElement('input'),s1=document.createElement('span');
-    el.title='Click to edit';b.style.background=toCss(c);inp.type='color';
+    el.title=tt('clickEdit');b.style.background=toCss(c);inp.type='color';
     inp.value='#'+[0,1,2].map(n=>hex2(c[n]).toLowerCase()).join('');
     inp.oninput=()=>{b.style.background=inp.value};
     inp.onchange=()=>editColor(k,inp.value,c[3]);
     s1.textContent=k;i.append(b,inp);el.append(i,s1,document.createTextNode(' '+v));sw.appendChild(el)}
-  if(!items.length){const e=document.createElement('div');e.className='none';e.textContent='No colors defined for this mode in the theme; the preview uses Discord defaults.';sw.appendChild(e)}
+  if(!items.length){const e=document.createElement('div');e.className='none';e.textContent=tt('noColors');sw.appendChild(e)}
 }
 function editColor(k,hex,alpha){
   const ta=dir==='s2c'?$('inp'):$('out');let d;try{d=JSON.parse(ta.value)}catch(e){return}
   const t=d.theme[pvMode],val=hex.toUpperCase()+hex2(alpha*255),m=k.match(/^backdrop (\d)$/);
   if(m){t.backdrop=t.backdrop||[];t.backdrop[m[1]-1]=val}else{t.colors=t.colors||{};t.colors[k]=val}
   ta.value=JSON.stringify(d);
-  if(dir==='s2c')run();else{showSwatches();preview();msg('Color updated in the output.')}
+  if(dir==='s2c')run();else{showSwatches();preview();msg(tt('colorUpd'))}
 }
-function setPv(m){pvMode=m;$('pvD').setAttribute('aria-pressed',m==='dark');$('pvL').setAttribute('aria-pressed',m==='light');showSwatches();preview()}
+function setPv(m){pvMode=m;saveSessD();$('pvD').setAttribute('aria-pressed',m==='dark');$('pvL').setAttribute('aria-pressed',m==='light');showSwatches();preview()}
 /* zip (store) */
 const CRCT=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
 const crc32=u=>{let c=~0;for(let i=0;i<u.length;i++)c=CRCT[(c^u[i])&255]^(c>>>8);return(~c)>>>0};
@@ -572,21 +668,64 @@ async function runBatch(files){
   for(const f of files){
     const row=document.createElement('div');row.className='br';const a=document.createElement('span'),b=document.createElement('span');a.textContent=f.name;row.append(a,b);box.appendChild(row);
     try{const r=convertOne(await f.text(),f.name);let n=r.name,i=2;while(used.has(n))n=r.name.replace(/(\.[^.]+(\.css)?)$/,' ('+(i++)+')$1');used.add(n);
-      ok.push({name:n,data:new TextEncoder().encode(r.out)});b.textContent='→ '+n+(r.note?' · palette guessed':'')+(r.noBg?' · no wallpaper':'')}
-    catch(e){bad++;b.textContent='Error: '+(e.message||e);b.className='bad'}
+      ok.push({name:n,data:new TextEncoder().encode(r.out)});b.textContent='→ '+n+(r.note?tt('guessed'):'')+(r.noBg?tt('noWall'):'')}
+    catch(e){bad++;b.textContent=tt('error')+(e.message||e);b.className='bad'}
   }
-  head.textContent=`Batch · ${ok.length} converted${bad?`, ${bad} failed`:''}`;
-  if(ok.length){const bt=document.createElement('button');bt.className='btn main';bt.textContent='Download ZIP';
+  head.textContent=tt('batchHead',ok.length,bad);
+  if(ok.length){const bt=document.createElement('button');bt.className='btn main';bt.textContent=tt('dlzip');
     bt.onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(makeZip(ok));a.download='converted-themes.zip';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1500)};head.appendChild(bt)}
   pendingBg=null;ruleNote='';
 }
+/* ---------- v1.9: style sliders, URL import, session ---------- */
+const SL=[['transparency',0,100,15,'sTr'],['blur',0,100,50,'sBl'],['window_radius',0,32,8,'sRad'],['body_size',10,22,14,'sBody'],['heading_size',14,32,19,'sHead'],['monospace_size',8,20,10,'sMono']];
+function buildStyle(){
+  const g=$('sg');g.innerHTML='';
+  for(const [k,mn,mx,df,lab] of SL){
+    const l=document.createElement('label'),s=document.createElement('span'),r=document.createElement('input'),o=document.createElement('output');
+    s.dataset.i18n=lab;r.type='range';r.min=mn;r.max=mx;r.id='sl_'+k;r.value=df;o.textContent=df;
+    r.oninput=()=>{o.textContent=r.value;clearTimeout(r._t);r._t=setTimeout(()=>editStyle(k,+r.value),140)};
+    l.append(s,r,o);g.appendChild(l);
+  }
+  const cl=document.createElement('label'),cb=document.createElement('input'),cs=document.createElement('span');
+  cl.className='ck';cb.type='checkbox';cb.id='sl_tb';cs.dataset.i18n='sTB';cb.onchange=()=>editStyle('transparency_blur',cb.checked);cl.append(cb,cs);g.appendChild(cl);
+}
+function showStyle(){
+  let d;try{d=JSON.parse((dir==='s2c'?$('inp'):$('out')).value)}catch(e){$('stylep').hidden=true;return}
+  const st=d.theme&&d.theme.style;if(!st){$('stylep').hidden=true;return}
+  $('stylep').hidden=false;
+  for(const [k,,,df] of SL){const r=$('sl_'+k);if(!r||document.activeElement===r)continue;const v=st[k]!=null?st[k]:df;r.value=v;r.nextElementSibling.textContent=v}
+  $('sl_tb').checked=!!st.transparency_blur;
+}
+function editStyle(k,v){
+  const ta=dir==='s2c'?$('inp'):$('out');let d;try{d=JSON.parse(ta.value)}catch(e){return}
+  d.theme.style=d.theme.style||{};d.theme.style[k]=v;ta.value=JSON.stringify(d);
+  if(dir==='s2c')run();else{showSwatches();preview();msg(tt('colorUpd'))}
+}
+async function fetchText(u){const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),20000);const r=await fetch(u,{signal:ac.signal});clearTimeout(tm);if(!r.ok)throw new Error('HTTP '+r.status);return r.text()}
+function normUrl(u){const m=u.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^/]+)\/(.+)$/);return m?`https://raw.githubusercontent.com/${m[1]}/${m[2]}/${m[3]}/${m[4]}`:u}
+async function importUrl(raw){
+  raw=(raw||'').trim();if(!/^https?:\/\//i.test(raw)){msg(tt('urlBad'),true);return}
+  const url=normUrl(raw);msg(tt('urlLoading'));
+  try{
+    let text=await fetchText(url);
+    if(!text.trim().startsWith('{')&&!/--[a-z0-9-]+\s*:/i.test(text)){
+      const imps=[...text.matchAll(/@import\s+(?:url\(\s*)?["']?(https?:[^"')\s;]+)/g)].map(m=>m[1]).slice(0,3);
+      for(const i of imps){try{text+='\n'+await fetchText(i)}catch(e){}}
+    }
+    load(text,url.split('/').pop().split('?')[0]);
+  }catch(e){msg(tt('urlFail',e.message||e),true)}
+}
+const LS='sdc.v1';let saveT=0;
+function saveSess(){try{const o={lang,langSet:langManual,dir,pv:pvMode,fmt:$('oFmt').value,light:$('oLight').checked,img:$('oImg').checked,name:$('oName').value},v=$('inp').value;if(v.length<1500000)o.inp=v;localStorage.setItem(LS,JSON.stringify(o))}catch(e){try{localStorage.removeItem(LS)}catch(_){}}}
+const saveSessD=()=>{clearTimeout(saveT);saveT=setTimeout(saveSess,500)};
 function run(){
+  saveSessD();
   const v=$('inp').value.trim();pendingBg=null;ruleNote='';runSeq++;
   if(!v){$('out').value='';msg('');$('sw').innerHTML='';return}
   try{
     {let o=dir==='s2c'?serein2css(v):css2serein(v);if(dir==='c2s'&&userImg){o=injectImg(o);pendingBg=null}$('out').value=o}
-    msg(ruleNote||'Converted.');if(dir==='c2s'&&pendingBg)fetchBg(pendingBg,runSeq);
-  }catch(e){$('out').value='';msg('Error: '+(e.message||e),true)}
+    msg(ruleNote||tt('converted'));if(dir==='c2s'&&pendingBg)fetchBg(pendingBg,runSeq);
+  }catch(e){$('out').value='';msg(tt('error')+(e.message||e),true)}
   showSwatches();preview();
 }
 function load(text,filename){
@@ -610,7 +749,8 @@ function preview(){
   set('--m-raised',g('raised',D.raised));set('--m-text',g('text',D.text));set('--m-muted',g('muted',D.muted));
   set('--m-acc',g('accent',D.acc));set('--m-link',g('link',g('accent',D.link)));
   set('--m-menbg',g('mention_bg',D.men));set('--m-pos',g('positive',g('accent',D.pos)));
-  [['top','top_bar'],['srv','server_list'],['ch','channel_list'],['msg','message_list'],['mem','member_list'],['comp','composer']].forEach(([a,b])=>set('--o-'+a,(sec[b]??100)+'%'));
+  [['top','top_bar'],['srv','server_list'],['ch','channel_list'],['msg','message_list'],['mem','member_list'],['comp','composer']].forEach(([a,b])=>set('--o-'+a,(sec[b]??(st.transparency_blur?100-(st.transparency??0):100))+'%'));
+  set('--blur',st.transparency_blur?((st.blur??0)/5)+'px':'0px');
   if(st.window_radius!=null)set('--rad',st.window_radius+'px');
   if(st.body_size)set('--bs',st.body_size+'px');if(st.heading_size)set('--hs',st.heading_size+'px');if(st.monospace_size)set('--ms',(st.monospace_size+2)+'px');
   const bi=d.background_image;
@@ -622,6 +762,10 @@ const logD=$('log');
 $('logBtn').onclick=()=>logD.showModal();
 $('logX').onclick=()=>logD.close();
 logD.addEventListener('click',e=>{if(e.target===logD)logD.close()});
+$('langBtn').onclick=()=>{lang=LANGS[(LANGS.indexOf(lang)+1)%LANGS.length];langManual=true;applyLang();saveSessD();run()};
+$('urlGo').onclick=()=>importUrl($('urlIn').value);
+$('urlIn').addEventListener('keydown',e=>{if(e.key==='Enter')importUrl($('urlIn').value)});
+$('resetSess').onclick=()=>{try{localStorage.removeItem(LS)}catch(e){}$('inp').value='';userImg=null;$('imgName').textContent='';$('imgClear').hidden=true;$('oName').value='';run();msg(tt('cleared'))};
 $('theme').onclick=()=>{const r=document.documentElement;r.dataset.theme=r.dataset.theme==='light'?'dark':'light'};
 $('inp').addEventListener('input',run);
 ['oName','oLight','oFmt','oImg'].forEach(id=>$(id).addEventListener('input',run));
@@ -629,7 +773,7 @@ $('d1').onclick=()=>setDir('s2c');$('d2').onclick=()=>setDir('c2s');
 $('sample').onclick=()=>{dir='s2c';$('inp').value=SAMPLE_S;setDir('s2c')};
 $('swap').onclick=()=>{const o=$('out').value;if(!o)return;setDir(dir==='s2c'?'c2s':'s2c');$('inp').value=o;run()};
 $('file').onchange=e=>{const fs=[...e.target.files];e.target.value='';if(fs.length>1)runBatch(fs);else if(fs[0])fs[0].text().then(t=>load(t,fs[0].name))};
-$('imgFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(!f.type.startsWith('image/')){msg('That is not an image file.',true);return}
+$('imgFile').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;if(!f.type.startsWith('image/')){msg(tt('notImage'),true);return}
   userImg=Array.from(new Uint8Array(await f.arrayBuffer()));$('imgName').textContent=f.name;$('imgClear').hidden=false;run()};
 $('imgClear').onclick=()=>{userImg=null;$('imgName').textContent='';$('imgClear').hidden=true;run()};
 $('pvD').onclick=()=>setPv('dark');$('pvL').onclick=()=>setPv('light');
@@ -639,10 +783,10 @@ const drop=$('drop');
 drop.addEventListener('drop',e=>{const fs=[...e.dataTransfer.files];if(fs.length>1)runBatch(fs);else if(fs[0])fs[0].text().then(t=>load(t,fs[0].name))});
 $('copy').onclick=async()=>{
   const o=$('out');o.select();
-  try{await navigator.clipboard.writeText(o.value);msg('Copied.')}catch(e){document.execCommand('copy');msg('Copied.')}
+  try{await navigator.clipboard.writeText(o.value);msg(tt('copied'))}catch(e){document.execCommand('copy');msg(tt('copied'))}
 };
 $('dl').onclick=()=>{
-  const o=$('out').value;if(!o){msg('Nothing to download.',true);return}
+  const o=$('out').value;if(!o){msg(tt('nothing'),true);return}
   const css=dir==='s2c';
   let name='theme';
   try{name=css?(($('oName').value||JSON.parse($('inp').value).manifest.name||'theme')):(JSON.parse(o).manifest.id)}catch(e){}
@@ -653,7 +797,12 @@ $('dl').onclick=()=>{
   a.download=fn;document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 };
-run();
+buildStyle();
+try{const o=JSON.parse(localStorage.getItem(LS)||'null');if(o){if(o.langSet&&LANGS.includes(o.lang)){lang=o.lang;langManual=true}if(o.fmt)$('oFmt').value=o.fmt;$('oLight').checked=o.light!==false;$('oImg').checked=o.img!==false;$('oName').value=o.name||'';if(o.pv==='light')pvMode='light';if(o.dir==='c2s')dir='c2s';if(o.inp)$('inp').value=o.inp}}catch(e){}
+applyLang();
+$('pvD').setAttribute('aria-pressed',pvMode==='dark');$('pvL').setAttribute('aria-pressed',pvMode==='light');
+setDir(dir);
+try{const q=new URLSearchParams(location.search).get('import');if(q){$('urlIn').value=q;importUrl(q)}}catch(e){}
 </script>
 </body>
 </html>
