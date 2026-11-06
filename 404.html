@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 · Serein ⇄ Discord CSS</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#111111">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#111;--line:rgba(255,255,255,.11);--ink:#f2f0ee;--sub:#9a9591;--acc:#ff6a2b;--dot:rgba(255,255,255,.07);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root{--bg:#f7f5f2;--line:rgba(30,20,10,.14);--ink:#1a1512;--sub:#6d655f;--acc:#e8530f;--dot:rgba(0,0,0,.09)}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:var(--bg) radial-gradient(var(--dot) 1px,transparent 1px) 0 0/16px 16px;color:var(--ink);font:16px/1.55 "Instrument Sans",system-ui,sans-serif;display:grid;place-items:center;padding:24px}
+main{position:relative;width:min(760px,100%);background:var(--bg);border:1px dashed var(--line);padding:56px 44px}
+main::before,main::after{content:"";position:absolute;width:8px;height:8px;background:var(--line);top:-4px}
+main::before{left:-4px}main::after{right:-4px}
+.tag{display:inline-block;border:1px dashed var(--acc);color:var(--acc);padding:5px 10px;font:500 12.5px "IBM Plex Mono",monospace;margin-bottom:22px}
+h1{font-size:clamp(64px,16vw,128px);line-height:1;letter-spacing:-.05em;margin:0 0 8px;font-weight:500}
+p{color:var(--sub);margin:0 0 28px;max-width:46ch}
+a.btn{display:inline-block;background:var(--acc);color:#140a05;text-decoration:none;font-weight:600;padding:10px 22px;border-radius:999px}
+a.btn:hover{opacity:.9}
+a:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+</style>
+</head>
+<body>
+<main>
+  <div class="tag">Serein ⇄ Discord CSS</div>
+  <h1>404</h1>
+  <p>This page does not exist. The converter lives on the home page.</p>
+  <a class="btn" href="/">Back to the converter</a>
+</main>
+</body>
+</html>
